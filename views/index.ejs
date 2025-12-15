@@ -1,0 +1,167 @@
+<div>
+  <!-- Formulario de carga de PDF -->
+  <div class="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+    <h2 id="tituloEstado" class="text-lg font-semibold mb-4">
+      Estado de Cuentas<% if (nombreArchivo) { %>: <%= nombreArchivo %><% } %>
+    </h2>
+    <form action="/procesar-pdf" method="POST" enctype="multipart/form-data" class="flex items-center gap-4">
+      <div class="flex-1">
+        <input 
+          type="file" 
+          name="pdfFile" 
+          accept=".pdf" 
+          required
+          class="block w-full text-sm text-gray-500
+                 file:mr-4 file:py-2 file:px-4
+                 file:rounded-md file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-blue-50 file:text-blue-700
+                 hover:file:bg-blue-100
+                 dark:file:bg-blue-900 dark:file:text-blue-100
+                 dark:hover:file:bg-blue-800"
+        >
+      </div>
+      <button 
+        type="submit" 
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Procesar PDF
+      </button>
+    </form>
+  </div>
+
+  <!-- Dashboard: Totales + chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="col-span-1 bg-white dark:bg-gray-800 shadow rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Unidades</p>
+      <p class="text-3xl font-bold">
+        <%= unidades.length %>
+      </p>
+    </div>
+    <div class="col-span-1 bg-white dark:bg-gray-800 shadow rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Saldo Pendiente</p>
+      <% 
+        const saldoPendiente = totales.sdo_pendiente || '0,00';
+      %>
+      <p class="text-2xl font-semibold text-red-600 dark:text-red-400">$ <%= saldoPendiente %></p>
+    </div>
+    <div class="col-span-1 bg-white dark:bg-gray-800 shadow rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+      <p class="text-gray-500 dark:text-gray-400 text-sm">Total a recaudar</p>
+      <% 
+        let totalRecaudar = 0; 
+        unidades.forEach(u => { 
+          const valor = u.total ? parseFloat(u.total.replace(/\./g, '').replace(',', '.')) : 0;
+          if (!isNaN(valor)) totalRecaudar += valor;
+        }); 
+        const totalFmt = totalRecaudar.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
+      %>
+      <p class="text-2xl font-semibold text-green-600 dark:text-green-400">$ <%= totalFmt %></p>
+    </div>
+  </div>
+
+  <!-- BUSCADOR -->
+  <input id="searchInput" type="text" placeholder="Buscar por nombre, UNI, piso o dpto…" 
+    class="mb-4 w-full px-4 py-2 rounded-lg border border-gray-300 
+           dark:border-gray-700 bg-white dark:bg-gray-800 
+           text-gray-900 dark:text-gray-200" />
+
+  <!-- TABLA -->
+  <div class="overflow-hidden rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3 text-left cursor-pointer sort" data-sort="uni">
+            UNI <span class="sort-icon opacity-40">⇅</span>
+          </th>
+          <th class="px-4 py-3 text-left">Piso</th>
+          <th class="px-4 py-3 text-left">Dpto</th>
+          <th class="px-4 py-3 text-left cursor-pointer sort" data-sort="copropietario">
+            Co-propietario <span class="sort-icon opacity-40">⇅</span>
+          </th>
+          <th class="px-4 py-3 text-right cursor-pointer sort" data-sort="total">
+            Total a PAGAR <span class="sort-icon opacity-40">⇅</span>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody id="tabla" class="divide-y divide-gray-200 dark:divide-gray-700">
+        <% if (!unidades || unidades.length===0) { %>
+          <tr>
+            <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+              No se encontró información. Verificá el PDF en /pdf/expensas.pdf
+            </td>
+          </tr>
+        <% } else { unidades.forEach(u=> { %>
+          <tr class="fila hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition"
+              onclick="location.href='/detalle/<%= u.uni %>'"
+              data-search="<%= (u.uni + ' ' + u.ps + ' ' + u.dpto + ' ' + u.copropietario).toLowerCase() %>"
+              data-uni="<%= u.uni %>"
+              data-copropietario="<%= u.copropietario.toLowerCase() %>"
+              data-total="<%= u.total ? u.total.replace(/\./g,'').replace(',','.') : 0 %>">
+
+            <td class="px-4 py-3 font-semibold"><%= u.uni %></td>
+            <td class="px-4 py-3"><%= u.ps %></td>
+            <td class="px-4 py-3"><%= u.dpto %></td>
+            <td class="px-4 py-3"><%= u.copropietario %></td>
+            <td class="px-4 py-3 text-right"><%= u.total %></td>
+
+          </tr>
+        <% }) } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* =========================
+      BUSCADOR
+========================== */
+const input = document.getElementById("searchInput");
+const filas = document.querySelectorAll(".fila");
+
+input.addEventListener("input", () => {
+  const val = input.value.toLowerCase().trim();
+  filas.forEach(f => {
+    const txt = f.dataset.search;
+    f.style.display = txt.includes(val) ? "" : "none";
+  });
+});
+
+/* =========================
+      ORDENAMIENTO
+========================== */
+let sortState = {};
+const sortIcons = { none: "⇅", asc: "↑", desc: "↓" };
+
+document.querySelectorAll(".sort").forEach(th => {
+  th.addEventListener("click", () => {
+    const tipo = th.dataset.sort;
+    const tbody = document.getElementById("tabla");
+    sortState[tipo] = sortState[tipo] === "asc" ? "desc" : "asc";
+    const asc = sortState[tipo] === "asc";
+
+    document.querySelectorAll(".sort-icon").forEach(i => {
+      i.textContent = "⇅";
+      i.classList.remove("text-blue-600", "dark:text-blue-400");
+    });
+
+    const icon = th.querySelector(".sort-icon");
+    icon.textContent = asc ? "↑" : "↓";
+    icon.classList.add("text-blue-600", "dark:text-blue-400");
+
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    rows.sort((a, b) => {
+      let va = a.dataset[tipo];
+      let vb = b.dataset[tipo];
+
+      if (tipo === "uni") return asc ? va - vb : vb - va;
+      if (tipo === "total") return asc ? (va - vb) : (vb - va);
+      if (tipo === "copropietario") return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+      return 0;
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+  });
+});
+</script>

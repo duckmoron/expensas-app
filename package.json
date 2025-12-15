@@ -1,0 +1,27 @@
+{
+  "name": "expensas-app",
+  "version": "1.0.0",
+  "description": "App to extract 'Estado de Cuentas' from expensas PDF and show details",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^4.22.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-fileupload": "^1.5.2",
+    "jspdf": "^3.0.4",
+    "jspdf-autotable": "^5.0.2",
+    "multer": "^2.0.2",
+    "pdf-parse": "^1.1.4",
+    "pdfjs-dist": "^2.16.105"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  },
+  "author": "",
+  "license": "MIT"
+}

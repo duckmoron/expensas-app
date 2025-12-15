@@ -1,0 +1,793 @@
+<div class="max-w-3xl mx-auto">
+  <a href="/" class="text-indigo-600 dark:text-indigo-400 hover:underline">&larr; Volver</a>
+
+  <div class="max-w-3xl mx-auto">
+    <!-- Sección CO-PROPIETARIO -->
+    <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700 mt-4 flex items-center space-x-4">
+      <div class="p-4 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+        <i class="fas fa-user text-indigo-600 dark:text-indigo-300 text-3xl"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold"><%= u.copropietario %></h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Piso: <span class="font-medium"><%= u.ps %></span> — Dpto: <span class="font-medium"><%= u.dpto %></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Sección MOVIMIENTOS -->
+    <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700 mt-4">
+      <h2 class="text-xl font-semibold mb-4">MOVIMIENTOS</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <!-- Widget Saldo Anterior -->
+        <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-md">
+              <i class="fas fa-history text-indigo-600 dark:text-indigo-300"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Saldo Anterior</p>
+              <p class="font-bold text-lg"><%= u.sdo_anterior %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget Su Pago -->
+        <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-green-100 dark:bg-green-900 rounded-md">
+              <i class="fas fa-money-bill text-green-600 dark:text-green-300"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Su Pago</p>
+              <p class="font-bold text-lg">
+                <%= u.su_pago && u.su_pago !== "" ? u.su_pago : "0,00" %>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Widget Pendiente -->
+        <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-amber-100 dark:bg-amber-900 rounded-md">
+              <i class="fas fa-exclamation-circle text-amber-600 dark:text-amber-300"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600 dark:text-gray-300">Saldo Pendiente</p>
+              <p class="font-bold text-lg flex items-center gap-2">
+                <span><%= u.sdo_pendiente || "0,00" %></span>
+                <% if (u.interes && u.interes !== "0,00") { %>
+                  <span class="text-amber-600 dark:text-amber-400 text-xs font-normal flex items-center gap-1">
+                    - interés: $ <%= u.interes %>
+                  </span>
+                <% } %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget Total -->
+        <div class="p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900 border border-indigo-300 dark:border-indigo-700">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-indigo-100 dark:bg-indigo-800 rounded-md">
+              <i class="fas fa-calculator text-indigo-700 dark:text-indigo-300"></i>
+            </div>
+            <div>
+              <p class="text-sm text-indigo-700 dark:text-indigo-300 font-semibold">TOTAL A PAGAR</p>
+              <p class="font-bold text-2xl"><%= u.total %></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sección de Información de la Unidad -->
+    <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700 mt-6">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h2 class="text-xl font-semibold mb-1">INFORME DE LA UNIDAD</h2>
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            <p>Propietario: <span class="font-medium"><%= u.copropietario %></span></p>
+            <p>Piso: <span class="font-medium"><%= u.ps %></span> - Dpto: <span class="font-medium"><%= u.dpto %></span></p>
+          </div>
+        </div>
+
+        <button id="descargarPdf" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none">
+          <i class="fas fa-file-pdf mr-2"></i>Descargar PDF
+        </button>
+      </div>
+
+      <% if (u.documentacion?.actualizado) { %>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Última actualización:
+          <span class="fecha-actualizacion">
+            <%= new Date(u.documentacion.actualizado).toLocaleString('es-AR', {
+              timeZone: 'America/Argentina/Buenos_Aires',
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) %>
+          </span>
+        </p>
+      <% } %>
+
+      <form id="unidadForm" class="space-y-10" enctype="multipart/form-data">
+
+  <!-- HIDDEN FIELDS -->
+  <input type="hidden" name="uni" id="uniField" value="<%= u.uni %>">
+  <input type="hidden" name="ps" id="psField" value="<%= u.ps %>">
+  <input type="hidden" name="dpto" id="dptoField" value="<%= u.dpto %>">
+
+  <!-- ============================= -->
+  <!-- DATOS PERSONALES -->
+  <!-- ============================= -->
+  <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+    <h2 class="text-base font-semibold text-gray-900 dark:text-white">
+      Datos personales
+    </h2>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      Información de contacto del responsable de la unidad.
+    </p>
+  </div>
+
+  <div class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- EMAIL -->
+      <div class="sm:col-span-1">
+        <label for="email" class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+          Email
+        </label>
+        <div class="mt-2">
+          <input type="email" id="email" name="email"
+            value="<%= u.documentacion?.email || '' %>"
+            class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm">
+        </div>
+      </div>
+
+      <!-- TELEFONO -->
+      <div class="sm:col-span-1">
+        <label for="telefono" class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+          Teléfono
+        </label>
+        <div class="mt-2">
+          <input type="tel" id="telefono" name="telefono"
+            value="<%= u.documentacion?.telefono || '' %>"
+            class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- AREAS DE TEXTO -->
+  <!-- ============================= -->
+  <div class="border-b border-gray-200 dark:border-gray-700 pb-6 pt-10">
+    <h2 class="text-base font-semibold text-gray-900 dark:text-white">
+      Estado y trabajos
+    </h2>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      Describe el estado actual y los trabajos relacionados con la unidad.
+    </p>
+  </div>
+
+  <div class="space-y-6">
+
+    <!-- ESTADO ACTUAL -->
+    <div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+        Estado Actual de la Unidad
+      </label>
+      <div class="mt-2">
+        <textarea id="estadoActual" name="estadoActual" rows="3"
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.estadoActual || 'En buen estado' %></textarea>
+      </div>
+    </div>
+
+    <!-- TRABAJOS NECESARIOS -->
+    <div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+        Trabajos a Realizar <span class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">(Trabajos iniciados por la actual administración)</span>
+        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+      Lista de trabajos que se necesitan realizar en la unidad.
+        </p>
+      </label>
+      <div class="mt-2">
+        <textarea id="trabajosNecesarios" name="trabajosNecesarios" rows="3"
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.trabajosNecesarios || 'Ninguno' %></textarea>
+      </div>
+    </div>
+
+    <!-- TRABAJOS EN PROCESO -->
+    <div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+        Trabajos en Curso
+        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+      Lista de trabajos que están en proceso de realización.
+        </p>
+      </label>
+      <div class="mt-2">
+        <textarea id="trabajosEnProceso" name="trabajosEnProceso" rows="3"
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.trabajosEnProceso || 'Ninguno' %></textarea>
+      </div>
+    </div>
+
+    <!-- TRABAJOS COMPLETADOS -->
+    <div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+        Trabajos Finalizados
+        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+      Lista de trabajos que han sido completados y no requieren más acción.
+        </p>
+      </label>
+      <div class="mt-2">
+        <textarea id="trabajosCompletados" name="trabajosCompletados" rows="3"
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.trabajosCompletados || 'Ninguno' %></textarea>
+      </div>
+    </div>
+
+    <!-- OBSERVACIONES -->
+    <div>
+      <label class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+        Observaciones Adicionales
+        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+      Cualquier otra información relevante o comentarios.
+        </p>
+      </label>
+      <div class="mt-2">
+        <textarea id="observaciones" name="observaciones" rows="3"
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.observaciones || '' %></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- IMÁGENES -->
+  <!-- ============================= -->
+  <div class="border-b border-gray-200 dark:border-gray-700 pb-6 pt-10">
+    <h2 class="text-base font-semibold text-gray-900 dark:text-white">
+      Imágenes
+    </h2>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      Visualiza las imágenes actuales o sube nuevas fotografías.
+    </p>
+  </div>
+
+  <div class="space-y-6">
+
+    <!-- EXISTING IMAGES -->
+    <% if (u.documentacion?.imagenes && u.documentacion.imagenes.length > 0) { %>
+      <div>
+        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Imágenes existentes
+        </h4>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="imagenesExistentes">
+          <% u.documentacion.imagenes.forEach((img, index) => { %>
+            <div class="relative group">
+              <div class="overflow-hidden rounded-lg shadow-sm">
+                <img src="<%= img.path %>"
+                     alt="Imagen <%= index + 1 %>"
+                     class="h-32 w-full object-cover rounded-lg cursor-pointer transition hover:opacity-90"
+                     data-src="<%= img.path %>">
+
+                <button type="button"
+                  class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                  onclick="event.stopPropagation(); eliminarImagen(this, '<%= u.uni %>', '<%= img.path %>')">
+                  ✕
+                </button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- FILE UPLOAD -->
+    <div class="flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+      <div class="text-center space-y-2">
+
+        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+          <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4" />
+        </svg>
+
+        <label class="cursor-pointer text-indigo-600 dark:text-indigo-400 font-medium">
+          <span>Subir imágenes</span>
+          <input id="imagenes" name="imagenes" type="file" class="sr-only" multiple accept="image/*">
+        </label>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF hasta 10MB</p>
+      </div>
+    </div>
+
+    <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+
+  </div>
+
+  <!-- ============================= -->
+  <!-- BOTONES -->
+  <!-- ============================= -->
+  <div class="flex justify-end gap-x-3 pt-10 border-t border-gray-200 dark:border-gray-700">
+
+    <button type="button" id="btnCancelar"
+      class="rounded-md bg-white dark:bg-gray-700 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+      Cancelar
+    </button>
+
+    <button type="submit"
+      class="rounded-md bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+      Guardar Cambios
+    </button>
+
+  </div>
+
+</form>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="imageModal"
+  class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+  <span id="closeModal" class="absolute top-4 right-4 text-white text-4xl cursor-pointer">&times;</span>
+  <img id="modalImage" class="max-w-4xl max-h-[90vh] object-contain">
+</div>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+/* -----------------------------------------------------------
+   FUNCIÓN GLOBAL – ELIMINAR IMAGEN
+----------------------------------------------------------- */
+window.eliminarImagen = async function(button, uni, imagePath) {
+  if (!window.showConfirm) return alert("showConfirm no está definido");
+
+  const result = await window.showConfirm({
+    title: '¿Eliminar imagen?',
+    text: 'Esta acción no se puede deshacer.',
+    confirmButtonText: 'Eliminar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const response = await fetch('/eliminar-imagen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uni, imagePath })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.message);
+
+    button.closest('.relative').remove();
+    window.showAlert?.({ icon: 'success', title: 'Imagen eliminada' });
+
+  } catch (err) {
+    console.error(err);
+    window.showAlert?.({
+      icon: 'error',
+      title: 'Error',
+      text: err.message
+    });
+  }
+};
+
+/* -----------------------------------------------------------
+   TODO EL RESTO DEL SCRIPT DENTRO DE DOMContentLoaded
+----------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+
+  const imagenesInput = document.getElementById('imagenes');
+  const imagePreview = document.getElementById('imagePreview');
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const closeModal = document.getElementById('closeModal');
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
+
+  /* -------------------------------------------
+     FUNCIÓN: Mostrar imagen en modal
+  ------------------------------------------- */
+  function showImageModal(src) {
+    modal.classList.remove('hidden');
+    modalImg.src = src;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal.onclick = () => {
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  };
+
+  modal.onclick = (e) => {
+    if (e.target === modal) closeModal.click();
+  };
+
+  /* -------------------------------------------
+     CLICK en imágenes existentes (CORREGIDO)
+  ------------------------------------------- */
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest('#imagenesExistentes img');
+    if (img) showImageModal(img.dataset.src);
+  });
+
+  /* -------------------------------------------
+     SUBIR NUEVAS IMÁGENES
+  ------------------------------------------- */
+  imagenesInput.addEventListener('change', () => {
+    imagePreview.innerHTML = "";
+
+    [...imagenesInput.files].forEach(file => {
+
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        window.showAlert?.({
+          icon: 'error',
+          title: 'Archivo no válido',
+          text: file.name
+        });
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        window.showAlert?.({
+          icon: 'error',
+          title: 'Archivo demasiado grande',
+          text: file.name
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = (ev) => {
+        const div = document.createElement('div');
+        div.className = "relative group";
+
+        div.innerHTML = `
+          <img src="${ev.target.result}" class="h-32 w-full object-cover rounded-lg cursor-pointer">
+          <button type="button"
+            class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100">
+            ✕
+          </button>
+        `;
+
+        // abrir modal
+        div.querySelector("img").onclick = () => showImageModal(ev.target.result);
+
+        // eliminar de preview
+        div.querySelector("button").onclick = (e) => {
+          e.stopPropagation();
+
+          const dt = new DataTransfer();
+
+          [...imagenesInput.files].forEach(f => {
+            if (f !== file) dt.items.add(f);
+          });
+
+          imagenesInput.files = dt.files;
+          div.remove();
+        };
+
+        imagePreview.appendChild(div);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  });
+
+  /* -------------------------------------------
+     GUARDAR FORMULARIO
+  ------------------------------------------- */
+  document.getElementById("unidadForm").addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const submitBtn = form.querySelector("button[type=submit]");
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Guardando...";
+
+    try {
+      const formData = new FormData(form);
+
+      const res = await fetch('/guardar-documentacion', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message);
+
+      window.showAlert?.({
+        icon: 'success',
+        title: 'Guardado',
+        text: 'Los datos fueron actualizados'
+      });
+
+      setTimeout(() => location.reload(), 1500);
+
+    } catch (err) {
+      console.error(err);
+
+      window.showAlert?.({
+        icon: 'error',
+        title: 'Error',
+        text: err.message
+      });
+
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Guardar Cambios";
+    }
+  });
+
+  /* -------------------------------------------
+     CANCELAR
+  ------------------------------------------- */
+  document.getElementById("btnCancelar").onclick = () => {
+    if (!window.showConfirm) return location.reload();
+
+    window.showConfirm({
+      title: "Descartar cambios",
+      text: "Se perderán los datos no guardados",
+      confirmButtonText: "Descartar",
+      cancelButtonText: "Cancelar"
+    }).then(r => {
+      if (r.isConfirmed) location.reload();
+    });
+  };
+
+});
+// Función para generar el PDF
+// Función para generar el PDF
+document.getElementById('descargarPdf').addEventListener('click', async function () {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const unit = {
+      ...<%- JSON.stringify(u) %>,
+      documentacion: <%- JSON.stringify(u.documentacion || {}) %>
+    };
+
+    // Configuración
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    const maxWidth = pageWidth - margin * 2;
+    let currentY = 20;
+
+    // ===========================
+    // TÍTULO
+    // ===========================
+    doc.setFontSize(18);
+    doc.text('INFORME DE UNIDAD', pageWidth / 2, currentY, { align: 'center' });
+    currentY += 15;
+
+    // ===========================
+    // DATOS DE LA UNIDAD
+    // ===========================
+    doc.setFontSize(12);
+    doc.text(`Propietario: ${unit.copropietario || 'No especificado'}`, margin, currentY);
+    currentY += 10;
+    doc.text(`Piso: ${unit.ps || ''} - Dpto: ${unit.dpto || ''}`, margin, currentY);
+    currentY += 10;
+
+    if (unit.documentacion?.actualizado) {
+      const fecha = new Date(unit.documentacion.actualizado).toLocaleString('es-AR', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      doc.text(`Última actualización: ${fecha}`, margin, currentY);
+      currentY += 15;
+    }
+
+    // ===========================
+    // DATOS PERSONALES
+    // ===========================
+    doc.setFontSize(14);
+    doc.text('DATOS PERSONALES', margin, currentY);
+    currentY += 10;
+
+    doc.setFontSize(11);
+    currentY = addTextWithLineBreaks(`Email: ${unit.documentacion?.email || 'No especificado'}`, margin, currentY, maxWidth) + 5;
+    currentY = addTextWithLineBreaks(`Teléfono: ${unit.documentacion?.telefono || 'No especificado'}`, margin, currentY, maxWidth) + 15;
+
+    // ===========================
+    // ESTADO
+    // ===========================
+    doc.setFontSize(14);
+    doc.text('ESTADO DE LA UNIDAD', margin, currentY);
+    currentY += 10;
+
+    doc.setFontSize(11);
+    currentY = addTextWithLineBreaks(unit.documentacion?.estadoActual || 'No especificado', margin, currentY, maxWidth) + 15;
+
+    // ===========================
+    // TABLA
+    // ===========================
+    const trabajos = [
+      ['Trabajos a Realizar', unit.documentacion?.trabajosNecesarios || 'Ninguno'],
+      ['Trabajos en Curso', unit.documentacion?.trabajosEnProceso || 'Ninguno'],
+      ['Trabajos Finalizados', unit.documentacion?.trabajosCompletados || 'Ninguno']
+    ];
+
+    doc.autoTable({
+      startY: currentY,
+      head: [['Tipo de Trabajo', 'Descripción']],
+      body: trabajos,
+      margin: { left: margin },
+      theme: 'grid',
+      headStyles: { fillColor: [220, 53, 69] }
+    });
+
+    currentY = doc.lastAutoTable.finalY + 15;
+
+    if (currentY > pageHeight - 40) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    // ===========================
+    // OBSERVACIONES
+    // ===========================
+    doc.setFontSize(14);
+    doc.text('OBSERVACIONES', margin, currentY);
+    currentY += 10;
+
+    doc.setFontSize(11);
+    currentY = addTextWithLineBreaks(unit.documentacion?.observaciones || 'Sin observaciones registradas', margin, currentY, maxWidth) + 20;
+
+    // ===========================
+    // IMÁGENES
+    // ===========================
+    if (unit.documentacion?.imagenes?.length) {
+      if (currentY > pageHeight - 50) {
+        doc.addPage();
+        currentY = 20;
+      } else {
+        currentY += 15;
+      }
+
+      doc.setFontSize(14);
+      doc.text('IMÁGENES', margin, currentY);
+      currentY += 10;
+
+      const imgWidth = (pageWidth - margin * 3) / 2;
+      let x = margin;
+      let firstInRow = true;
+
+      const addImageToPdf = async (img) => {
+        try {
+          const response = await fetch(img.path);
+          const blob = await response.blob();
+
+          const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
+          });
+
+          const imgElement = new Image();
+          imgElement.src = base64;
+
+          await new Promise((resolve) => {
+            imgElement.onload = () => {
+              const ratio = imgElement.width / imgWidth;
+              const imgHeight = imgElement.height / ratio;
+
+              if (currentY + imgHeight > pageHeight - 20) {
+                doc.addPage();
+                currentY = 20;
+                x = margin;
+                firstInRow = true;
+              }
+
+              doc.addImage(base64, x, currentY, imgWidth, imgHeight);
+
+              if (firstInRow) {
+                x = margin * 2 + imgWidth;
+                firstInRow = false;
+              } else {
+                x = margin;
+                currentY += imgHeight + 10;
+                firstInRow = true;
+              }
+
+              resolve();
+            };
+          });
+
+        } catch (error) {
+          console.error('Error al cargar la imagen:', error);
+          doc.text('[Error al cargar imagen]', x, currentY);
+          currentY += 10;
+        }
+      };
+
+      for (const img of unit.documentacion.imagenes) {
+        await addImageToPdf(img);
+      }
+    }
+
+    // ===========================
+    // FUNCIÓN AUXILIAR SALTOS
+    // ===========================
+    function addTextWithLineBreaks(text, x, y, maxWidth) {
+      const splitText = doc.splitTextToSize(text, maxWidth);
+      doc.text(splitText, x, y);
+      return y + (splitText.length * 7);
+    }
+
+    // ================================================
+    //  PIE DE PÁGINA (footer) PARA TODAS LAS PÁGINAS
+    // ================================================
+    function addFooter(doc, pageNumber, totalPages) {
+      const footerColor = 170; // gris claro (#aaaaaa)
+      const y = pageHeight - 15; // posición de la línea
+      const footerY = pageHeight - 10; // posición del texto
+
+      // --- Línea horizontal ---
+      doc.setDrawColor(footerColor);
+      doc.setLineWidth(0.3);
+      doc.line(margin, y, pageWidth - margin, y);
+
+      // --- Texto del pie ---
+      doc.setFontSize(9);
+      doc.setTextColor(footerColor);
+
+      const leftText = `Propietario: ${unit.copropietario || 'N/E'} | Piso: ${unit.ps || ''} | Dpto: ${unit.dpto || ''}`;
+      const rightText = `Página ${pageNumber} de ${totalPages}`;
+
+      doc.text(leftText, margin, footerY);
+      doc.text(rightText, pageWidth - margin, footerY, { align: 'right' });
+    }
+
+
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      addFooter(doc, i, totalPages);
+    }
+
+    // Guardar PDF
+    doc.save(`Informe_Unidad_${unit.ps || ''}_${unit.dpto || ''}.pdf`);
+
+  } catch (error) {
+    console.error('Error al generar el PDF:', error);
+    alert('Ocurrió un error al generar el PDF: ' + error.message);
+  }
+});
+
+// Inicializar tooltips
+document.addEventListener('DOMContentLoaded', function() {
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function(tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+});
+</script>
+
+<style>
+#imageModal { display: none; }
+#imageModal:not(.hidden) { display: flex; }
+</style>

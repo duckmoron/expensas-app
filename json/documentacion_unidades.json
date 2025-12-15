@@ -1,0 +1,426 @@
+{
+  "029": {
+    "email": "",
+    "telefono": "",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "uni": "029",
+    "ps": "7",
+    "dpto": "A",
+    "actualizado": "2025-12-05T02:32:25.735Z"
+  },
+  "002": {
+    "uni": "002",
+    "ps": "LO",
+    "dpto": "",
+    "email": "",
+    "telefono": "",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [
+      {
+        "name": "sostenible-insostenible.PNG",
+        "path": "/uploads/002/1764902511871-sostenible-insostenible.PNG",
+        "size": 913360,
+        "mimetype": "image/png"
+      },
+      {
+        "name": "sostenible-insostenible_02.PNG",
+        "path": "/uploads/002/1764902511880-sostenible-insostenible_02.PNG",
+        "size": 796558,
+        "mimetype": "image/png"
+      },
+      {
+        "name": "sostenible-insostenible_03.PNG",
+        "path": "/uploads/002/1764902511886-sostenible-insostenible_03.PNG",
+        "size": 2349554,
+        "mimetype": "image/png"
+      }
+    ],
+    "actualizado": "2025-12-05T03:33:07.313Z"
+  },
+  "001": {
+    "uni": "001",
+    "ps": "LO",
+    "dpto": "LOC",
+    "email": "",
+    "telefono": "",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [
+      {
+        "name": "sostenible-insostenible_02.PNG",
+        "path": "/uploads/001/1764904608441-sostenible-insostenible_02.PNG",
+        "size": 796558,
+        "mimetype": "image/png"
+      },
+      {
+        "name": "sostenible-insostenible_03.PNG",
+        "path": "/uploads/001/1764904608448-sostenible-insostenible_03.PNG",
+        "size": 2349554,
+        "mimetype": "image/png"
+      },
+      {
+        "name": "sostenible-insostenible_04.PNG",
+        "path": "/uploads/001/1764904608453-sostenible-insostenible_04.PNG",
+        "size": 875733,
+        "mimetype": "image/png"
+      }
+    ],
+    "actualizado": "2025-12-05T03:16:55.271Z"
+  },
+  "022": {
+    "uni": "022",
+    "ps": "5",
+    "dpto": "B",
+    "email": "patriciomoron@gmail.com",
+    "telefono": "1159914303",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [],
+    "actualizado": "2025-12-05T22:04:47.291Z"
+  },
+  "025": {
+    "uni": "025",
+    "ps": "6",
+    "dpto": "A",
+    "email": "ffried@gmail.com",
+    "telefono": "",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "1. Arreglo pintura living por filtración medianera.\r\n2. Arreglo pintura dormitorio por filtración medianera.\r\n3. Arreglo pintura baño por filtración desde 7° A.",
+    "trabajosEnProceso": "1. Arreglo piso living, rotura durante retiro canteros.\r\n2. Pintura rejas balcón y soldadura rejas de seguridad.",
+    "trabajosCompletados": "1. Arreglo interno cocina por filtración pulmón.",
+    "observaciones": "",
+    "imagenes": [
+      {
+        "name": "Pared dormitorio1.jpg",
+        "path": "/uploads/025/1764973008149-Pared dormitorio1.jpg",
+        "size": 27226,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "Pared dormitorio2.jpg",
+        "path": "/uploads/025/1764973008151-Pared dormitorio2.jpg",
+        "size": 31066,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "Pared living.jpg",
+        "path": "/uploads/025/1764973008152-Pared living.jpg",
+        "size": 36911,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "Reja lateral Aguirre.jpg",
+        "path": "/uploads/025/1764973008154-Reja lateral Aguirre.jpg",
+        "size": 107384,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "Reja lateral Loyola.jpg",
+        "path": "/uploads/025/1764973008154-Reja lateral Loyola.jpg",
+        "size": 139797,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "Rejas sin soldar.jpeg",
+        "path": "/uploads/025/1764973008155-Rejas sin soldar.jpeg",
+        "size": 193430,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "Rotura piso living.jpg",
+        "path": "/uploads/025/1764973008156-Rotura piso living.jpg",
+        "size": 183923,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:16:48.157Z"
+  },
+  "017": {
+    "uni": "017",
+    "ps": "4",
+    "dpto": "A",
+    "email": "cynthian61@yahoo.com.ar",
+    "telefono": "1131643872",
+    "estadoActual": "Paredes con humedad en un dormitorio, pasillo, living y lavadero por perdida de 5° A.\r\nRajaduras de techos dormitorio y pasillo. (Agosto 2025)",
+    "trabajosNecesarios": "Humedad en pared del dormitorio, pasillo y techos. Revisión de baño por perdidas en 3° A.",
+    "trabajosEnProceso": "Balcones, se descascaro todo lo que pintaron (pintaron sobre óxido, no lijaron sólo pasaron un rodillo).\r\nSe desoldaron los barrotes.",
+    "trabajosCompletados": "No me realizaron ningún trabajo salvo los balcones.",
+    "observaciones": "Opino que los próximos trabajos deberian ser realizados por gente idónea y eficiente.\r\nPara las filtraciones plomeros matriculados.\r\nPara las paredes pintores y albañil.\r\nY balcones herreros para las rejas y que sepan lijar y preparar antes de pintar.\r\n\r\nMuchas gracias!",
+    "imagenes": [
+      {
+        "name": "1.jpg",
+        "path": "/uploads/017/1764973264935-1.jpg",
+        "size": 447183,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "2.jpg",
+        "path": "/uploads/017/1764973264936-2.jpg",
+        "size": 631179,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "3.jpg",
+        "path": "/uploads/017/1764973264937-3.jpg",
+        "size": 1032421,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "4.jpg",
+        "path": "/uploads/017/1764973264938-4.jpg",
+        "size": 1091949,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "5.jpg",
+        "path": "/uploads/017/1764973264940-5.jpg",
+        "size": 893113,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "6.jpg",
+        "path": "/uploads/017/1764973264941-6.jpg",
+        "size": 953099,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "7.jpg",
+        "path": "/uploads/017/1764973264942-7.jpg",
+        "size": 808707,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "8.jpg",
+        "path": "/uploads/017/1764973264943-8.jpg",
+        "size": 606400,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:21:04.944Z"
+  },
+  "016": {
+    "uni": "016",
+    "ps": "3",
+    "dpto": "D",
+    "email": "dergiodg@live.com.ar",
+    "telefono": "1161958427",
+    "estadoActual": "La unidad se encuentra en buen estado. Salvo el baño que en 2022 rompieron mampostería para soldar caño de calefacción. Falta colocar cerámicos en pared y piso.",
+    "trabajosNecesarios": "Terminar el baño.",
+    "trabajosEnProceso": "Arreglo del baño que lo menciono en \"Estado actual\".",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "Todos estos años me comuniqué muchas veces con el señor Chavez y ahora con Marcelo. Me prometió muchas veces venir a hacer el trabajo. No vinieron nunca, se llevaron un pedazo de cerámica para comprar el mismo tono, dijeron que no lo conseguian, se los pedi para ir yo mismo a comprarlo, no me lo dieron nunca. Todo eran mentiras y más mentiras.",
+    "imagenes": [
+      {
+        "name": "1000017765.jpg",
+        "path": "/uploads/016/1764974234932-1000017765.jpg",
+        "size": 4369171,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000017767.jpg",
+        "path": "/uploads/016/1764974234935-1000017767.jpg",
+        "size": 4404453,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:37:14.937Z"
+  },
+  "008": {
+    "uni": "008",
+    "ps": "1",
+    "dpto": "D",
+    "email": "mitzkovici@gmail.com",
+    "telefono": "",
+    "estadoActual": "Perfectas condiciones.",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [],
+    "actualizado": "2025-12-05T21:18:36.191Z"
+  },
+  "015": {
+    "uni": "015",
+    "ps": "3",
+    "dpto": "C",
+    "email": "lidita1944@gmail.com",
+    "telefono": "",
+    "estadoActual": "Sin problemas.",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [],
+    "actualizado": "2025-12-05T21:19:44.240Z"
+  },
+  "031": {
+    "uni": "031",
+    "ps": "7",
+    "dpto": "C",
+    "email": "",
+    "telefono": "",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [
+      {
+        "name": "1000140484.jpg",
+        "path": "/uploads/031/1764973364240-1000140484.jpg",
+        "size": 2313248,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000140487.jpg",
+        "path": "/uploads/031/1764973364242-1000140487.jpg",
+        "size": 2148584,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000140488.jpg",
+        "path": "/uploads/031/1764973364244-1000140488.jpg",
+        "size": 2740510,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000140489.jpg",
+        "path": "/uploads/031/1764973364246-1000140489.jpg",
+        "size": 2613966,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000140490.jpg",
+        "path": "/uploads/031/1764973364248-1000140490.jpg",
+        "size": 2724426,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000140491.jpg",
+        "path": "/uploads/031/1764973364249-1000140491.jpg",
+        "size": 2470367,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "1000140492.jpg",
+        "path": "/uploads/031/1764973364251-1000140492.jpg",
+        "size": 2835706,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:22:44.252Z"
+  },
+  "014": {
+    "uni": "014",
+    "ps": "3",
+    "dpto": "B",
+    "email": "",
+    "telefono": "",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Ninguno",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "Envio fotos externas del pasillo.",
+    "imagenes": [
+      {
+        "name": "WhatsApp Image 2025-11-30 at 22.43.00 (1).jpeg",
+        "path": "/uploads/014/1764973492180-WhatsApp Image 2025-11-30 at 22.43.00 (1).jpeg",
+        "size": 152060,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "WhatsApp Image 2025-11-30 at 22.43.00.jpeg",
+        "path": "/uploads/014/1764973492181-WhatsApp Image 2025-11-30 at 22.43.00.jpeg",
+        "size": 210028,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "WhatsApp Image 2025-11-30 at 22.43.01.jpeg",
+        "path": "/uploads/014/1764973492182-WhatsApp Image 2025-11-30 at 22.43.01.jpeg",
+        "size": 250314,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:24:52.183Z"
+  },
+  "026": {
+    "uni": "026",
+    "ps": "6",
+    "dpto": "B",
+    "email": "vampeta2@yahoo.com.ar",
+    "telefono": "1166082528",
+    "estadoActual": "En buen estado",
+    "trabajosNecesarios": "Hace 2 años cayó agua desde el techo de la cocina, desde el techo del baño y desde el techo del ante baño. En ese momento se hizo una destapación en la cocina del departamento 7° A y Chavez cambió un caño en esa unidad. El trabajo a realizar ahora es lijar, enduir y pintar los techos del baño, ante baño y cocina. Pero hace un mes volvió a caer agua desde el techo de la cocina. Ahora Marcelo tiene que ir a trabajar al 7° A",
+    "trabajosEnProceso": "1. Determinar si el problema es un caño del departamento de Daniel o si el problema es un caño de la loza radiante.\r\n2. Por otro lado, cuando llueve se filtra agua desde la ventana del lavadero y en la union de pared y techo de la habitación.",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [
+      {
+        "name": "WhatsApp Image 2025-12-01 at 10.51.42 AM.jpeg",
+        "path": "/uploads/026/1764973629485-WhatsApp Image 2025-12-01 at 10.51.42 AM.jpeg",
+        "size": 83826,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "WhatsApp Image 2025-12-01 at 10.52.09 AM.jpeg",
+        "path": "/uploads/026/1764973629485-WhatsApp Image 2025-12-01 at 10.52.09 AM.jpeg",
+        "size": 72651,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "WhatsApp Image 2025-12-01 at 10.52.37 AM.jpeg",
+        "path": "/uploads/026/1764973629486-WhatsApp Image 2025-12-01 at 10.52.37 AM.jpeg",
+        "size": 46978,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "WhatsApp Image 2025-12-01 at 10.52.59 AM.jpeg",
+        "path": "/uploads/026/1764973629487-WhatsApp Image 2025-12-01 at 10.52.59 AM.jpeg",
+        "size": 53498,
+        "mimetype": "image/jpeg"
+      },
+      {
+        "name": "WhatsApp Image 2025-12-01 at 10.53.36 AM.jpeg",
+        "path": "/uploads/026/1764973629488-WhatsApp Image 2025-12-01 at 10.53.36 AM.jpeg",
+        "size": 64323,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:34:33.619Z"
+  },
+  "004": {
+    "uni": "004",
+    "ps": "PB",
+    "dpto": "B",
+    "email": "rodo.franco1@gmail.com",
+    "telefono": "",
+    "estadoActual": "La Unidad fue recibida en 2024 y está en buenas condiciones, excepto el baño que tenía y tiene un problema en el techo con un arreglo a medio terminar por filtraciones que nunca se pintó.",
+    "trabajosNecesarios": "Enduido y pintura en baño.",
+    "trabajosEnProceso": "Ninguno",
+    "trabajosCompletados": "Ninguno",
+    "observaciones": "",
+    "imagenes": [
+      {
+        "name": "WhatsApp Image 2025-12-03 at 10.28.37.jpeg",
+        "path": "/uploads/004/1764974390683-WhatsApp Image 2025-12-03 at 10.28.37.jpeg",
+        "size": 45791,
+        "mimetype": "image/jpeg"
+      }
+    ],
+    "actualizado": "2025-12-05T22:39:50.685Z"
+  }
+}
