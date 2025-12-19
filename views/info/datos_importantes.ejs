@@ -1,0 +1,109 @@
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <!-- Encabezado -->
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Datos Institucionales</h2>
+    <p class="text-gray-600 dark:text-gray-400 mt-2">Información fija del consorcio y administración</p>
+  </div>
+
+  <% if (!metadata || !metadata.fijos) { %>
+    <div class="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-400 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-yellow-700 dark:text-yellow-200">
+            No hay datos cargados. Por favor, procesa un archivo de expensas primero.
+          </p>
+        </div>
+      </div>
+    </div>
+  <% } else { %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- CONSORCIO -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-indigo-600 px-6 py-4">
+          <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+            <i class="fas fa-building"></i> Consorcio
+          </h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Nombre</p>
+            <p class="text-gray-900 dark:text-gray-200 font-medium"><%= metadata.fijos.consorcio?.nombre || '-' %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Dirección</p>
+            <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.consorcio?.direccion || '-' %></p>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">CUIT</p>
+              <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.consorcio?.cuit || '-' %></p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Clave SUTERH</p>
+              <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.consorcio?.clave_suterh || '-' %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMINISTRACIÓN -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-emerald-600 px-6 py-4">
+          <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+            <i class="fas fa-user-tie"></i> Administración
+          </h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Nombre</p>
+            <p class="text-gray-900 dark:text-gray-200 font-medium"><%= metadata.fijos.administracion?.nombre || '-' %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Contacto</p>
+            <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.administracion?.mail || '-' %></p>
+            <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.administracion?.telefono || '-' %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Urgencias</p>
+            <p class="text-red-600 dark:text-red-400 font-bold"><%= metadata.fijos.administracion?.urgencias || '-' %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Datos Fiscales</p>
+            <p class="text-xs text-gray-600 dark:text-gray-400"><%= metadata.fijos.administracion?.rpa || '-' %></p>
+            <p class="text-xs text-gray-600 dark:text-gray-400"><%= metadata.fijos.administracion?.cuit || '-' %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BANCO -->
+      <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="bg-slate-700 px-6 py-4">
+          <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+            <i class="fas fa-university"></i> Datos Bancarios
+          </h3>
+        </div>
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Entidad</p>
+            <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.banco?.entidad || '-' %></p>
+            <p class="text-sm text-gray-600 dark:text-gray-400"><%= metadata.fijos.banco?.sucursal || '-' %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Cuenta Corriente</p>
+            <p class="text-xl font-mono text-gray-900 dark:text-gray-200"><%= metadata.fijos.banco?.cuenta || '-' %></p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">CBU</p>
+            <p class="text-xl font-mono text-gray-900 dark:text-gray-200 tracking-wide"><%= metadata.fijos.banco?.cbu || '-' %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>

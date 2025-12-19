@@ -45,6 +45,12 @@ const mainController = {
       console.error("❌ Error al procesar:", error);
       next(error);
     }
+  },
+
+  datosImportantes: (req, res) => {
+    res.render("info/datos_importantes", {
+      title: "Datos Importantes"
+    });
   }
 };
 

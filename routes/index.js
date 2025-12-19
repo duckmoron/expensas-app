@@ -9,6 +9,7 @@ const estadisticasController = require('../controllers/estadisticasController');
 router.get('/', mainController.index);
 router.post('/procesar-pdf', mainController.procesarPdf);
 router.get('/estadisticas', estadisticasController.index);
+router.get('/datos-importantes', mainController.datosImportantes);
 
 // Rutas de Unidades
 router.get('/detalle/:uni', unidadesController.detalle);
