@@ -6,6 +6,11 @@ const jsonService = require('../services/jsonService');
 const unidadesController = {
   detalle: async (req, res) => {
     try {
+      // Si viene el parámetro json en la URL, actualizamos la sesión para ver ese histórico
+      if (req.query.json) {
+        req.session.jsonActivo = req.query.json;
+      }
+
       const lastJSON = await jsonService.getActiveJSON(req.session);
       if (!lastJSON) return res.status(404).send('No hay datos de PDF procesados');
 

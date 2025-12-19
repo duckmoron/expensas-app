@@ -10,6 +10,54 @@
     </p>
   </div>
 
+  <!-- SECCIÓN DE FILTROS -->
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Filtros de Análisis</h3>
+      <button id="btnResetFilters" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Restablecer</button>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <!-- Rango de Fechas -->
+      <div class="md:col-span-4 space-y-3">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Periodo</label>
+        <div class="flex gap-2 items-center">
+          <select id="periodoDesde" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm py-2"></select>
+          <span class="text-gray-500">➜</span>
+          <select id="periodoHasta" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm py-2"></select>
+        </div>
+      </div>
+
+      <!-- Rubros -->
+      <div class="md:col-span-8 space-y-3">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Rubros (Impacta en Gastos)</label>
+        <div id="rubrosContainer" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-3 border rounded-md border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+          <!-- Checkboxes generados por JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs (Indicadores Clave) -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800">
+      <p class="text-sm text-indigo-600 dark:text-indigo-300 font-medium">Gasto Acumulado (Sel.)</p>
+      <p class="text-2xl font-bold text-indigo-800 dark:text-indigo-100" id="kpiGastoTotal">-</p>
+    </div>
+    <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl border border-blue-100 dark:border-blue-800">
+      <p class="text-sm text-blue-600 dark:text-blue-300 font-medium">Promedio Gastos (Sel.)</p>
+      <p class="text-2xl font-bold text-blue-800 dark:text-blue-100" id="kpiPromedio">-</p>
+    </div>
+    <div class="bg-emerald-50 dark:bg-emerald-900/30 p-4 rounded-xl border border-emerald-100 dark:border-emerald-800">
+      <p class="text-sm text-emerald-600 dark:text-emerald-300 font-medium">Promedio Ingresos</p>
+      <p class="text-2xl font-bold text-emerald-800 dark:text-emerald-100" id="kpiPromedioIngresos">-</p>
+    </div>
+    <div class="bg-red-50 dark:bg-red-900/30 p-4 rounded-xl border border-red-100 dark:border-red-800">
+      <p class="text-sm text-red-600 dark:text-red-300 font-medium">Promedio Egresos</p>
+      <p class="text-2xl font-bold text-red-800 dark:text-red-100" id="kpiPromedioEgresos">-</p>
+    </div>
+  </div>
+
   <!-- Gráfico 1: Evolución de Gastos Totales -->
   <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700">
     <h3 class="text-lg font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Evolución del Gasto Total</h3>
@@ -37,6 +85,39 @@
     </div>
 
   </div>
+
+  <!-- SECCIÓN EXPENSAS -->
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 mt-8">
+    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">
+      Análisis de Liquidación de Expensas
+    </h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Gráfico Total Expensas -->
+      <div>
+        <h3 class="text-lg font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Total Expensas Generadas</h3>
+        <div class="relative h-72 w-full">
+          <canvas id="chartExpensasTotal"></canvas>
+        </div>
+      </div>
+
+      <!-- Gráfico Por Unidad -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-indigo-600 dark:text-indigo-400">Evolución por Unidad</h3>
+          <select id="selectUnidad" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm py-1 px-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <!-- Poblado por JS -->
+          </select>
+        </div>
+        <div class="relative h-72 w-full">
+          <canvas id="chartExpensasUnidad"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <!-- Chart.js -->

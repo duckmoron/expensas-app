@@ -18,6 +18,7 @@ const estadisticasController = {
         const periodoStr = meta.aviso_pago?.periodo?.trim() || 'Desconocido';
         
         return {
+          archivo: file.__filename, // Pasamos el nombre del archivo al frontend
           periodo: periodoStr,
           gastos: {
             total: parseMoney(meta.gastos_mes?.total_gastos),
@@ -33,6 +34,13 @@ const estadisticasController = {
             // Los egresos suelen venir en negativo, los pasamos a positivo para el gráfico
             egresos: Math.abs(parseMoney(meta.pagos_cobranzas?.egresos)),
             saldo_final: parseMoney(meta.pagos_cobranzas?.saldo_final)
+          },
+          expensas: {
+            total: parseMoney(file.totales?.total_general),
+            unidades: (file.unidades || []).map(u => ({
+              uni: u.uni,
+              total: parseMoney(u.total)
+            }))
           }
         };
       });

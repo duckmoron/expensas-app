@@ -64,7 +64,9 @@ const jsonService = {
       
       const allData = await Promise.all(jsonFiles.map(async f => {
         const content = await fs.readFile(path.join(PARSER_DIR, f), 'utf8');
-        return JSON.parse(content);
+        const data = JSON.parse(content);
+        data.__filename = f; // Inyectamos el nombre del archivo
+        return data;
       }));
       
       return allData;
