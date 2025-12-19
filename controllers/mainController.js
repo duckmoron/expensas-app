@@ -7,7 +7,7 @@ const jsonService = require('../services/jsonService');
 const mainController = {
   index: async (req, res) => {
     const jsonFiles = await jsonService.getAllParsedJSONFiles();
-    res.render("index", {
+    res.render("home/index", {
       title: "Expensas",
       headerTitle: "Cargar Estado de Cuentas",
       jsonFiles

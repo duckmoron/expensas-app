@@ -14,7 +14,7 @@ const unidadesController = {
 
       const datosGuardados = await jsonService.getDocumentation();
 
-      res.render('detalle', {
+      res.render('unidades/detalle', {
         title: `UNIDAD ${unidad.uni}`,
         u: { ...unidad, documentacion: datosGuardados[unidad.uni] || {} }
       });

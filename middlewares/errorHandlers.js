@@ -1,6 +1,6 @@
 // Middleware para manejar error 404 (Página no encontrada)
 const notFound = (req, res, next) => {
-  res.status(404).render('error', {
+  res.status(404).render('errors/error', {
     message: 'Página no encontrada (Error 404)',
     error: {} // No mostramos stack trace en 404
   });
@@ -16,7 +16,7 @@ const serverError = (err, req, res, next) => {
     return res.status(status).json({ success: false, message: err.message });
   }
 
-  res.status(status).render('error', {
+  res.status(status).render('errors/error', {
     message: err.message || 'Ocurrió un error inesperado',
     error: process.env.NODE_ENV === 'development' ? err.stack : {}
   });

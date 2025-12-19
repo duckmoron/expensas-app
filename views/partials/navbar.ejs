@@ -1,0 +1,47 @@
+<nav class="w-full bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4">
+  <div class="max-w-6xl mx-auto flex justify-between items-center">
+
+    <!-- TÍTULO -->
+    <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200">
+      <%= typeof title !== 'undefined' ? title : 'Expensas' %>
+    </h1>
+
+    <!-- MENÚ -->
+    <ul class="flex space-x-6 text-gray-700 dark:text-gray-300">
+      <li>
+        <a href="/servicios"
+           class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+          Servicios
+        </a>
+      </li>
+
+      <li>
+        <a href="/asamblea"
+           class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+          Asamblea
+        </a>
+      </li>
+
+      <li>
+        <a href="/expensas"
+           class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+          Expensas
+        </a>
+      </li>
+
+      <li>
+        <a href="/contacto"
+           class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+          Contacto
+        </a>
+      </li>
+    </ul>
+
+    <!-- DARK MODE -->
+    <button id="toggleDark"
+      class="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600">
+      🌙 / ☀️
+    </button>
+
+  </div>
+</nav>

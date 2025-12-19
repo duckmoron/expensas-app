@@ -4,51 +4,7 @@
   <meta charset="UTF-8">
   <title><%= typeof title !== 'undefined' ? title : 'Expensas' %></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    .disabled-ui {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .thumbnail {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .thumbnail:hover {
-      transform: scale(1.05);
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.9);
-    }
-    .modal-content {
-      margin: auto;
-      display: block;
-      max-width: 90%;
-      max-height: 90%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      position: absolute;
-    }
-    .close {
-      position: absolute;
-      top: 15px;
-      right: 35px;
-      color: #f1f1f1;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/style.css">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -58,127 +14,20 @@
   </script>
   <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-  // Asegurarse de que SweetAlert2 esté disponible globalmente
-  document.Swal = Swal;
-  window.Swal = Swal;
-
-  // Esperar a que el DOM esté completamente cargado
-  document.addEventListener('DOMContentLoaded', function() {
-    // Configuración global de SweetAlert2
-    window.Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer);
-        toast.addEventListener('mouseleave', Swal.resumeTimer);
-      }
-    });
-
-    // Función global para mostrar alertas
-    window.showAlert = function(options) {
-      const toastOptions = {
-        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
-        color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#1f2937',
-        iconColor: document.documentElement.classList.contains('dark') ? '#818cf8' : '#4f46e5'
-      };
-
-      if (typeof options === 'string') {
-        return window.Toast.fire({
-          ...toastOptions,
-          icon: 'info',
-          title: options
-        });
-      }
-      return window.Toast.fire({ ...toastOptions, ...options });
-    };
-
-    // Función para confirmaciones
-    window.showConfirm = function(options) {
-      return Swal.fire({
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: options.confirmButtonText || 'Sí, continuar',
-        cancelButtonText: options.cancelButtonText || 'Cancelar',
-        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
-        color: document.documentElement.classList.contains('dark') ? '#ffffff' : '#1f2937',
-        confirmButtonColor: '#4f46e5',
-        cancelButtonColor: '#6b7280',
-        ...options
-      });
-    };
-  });
-</script>
 
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
   <!-- NAVBAR -->
-  <nav class="w-full bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4">
-    <div class="max-w-6xl mx-auto flex justify-between items-center">
-  
-  <!-- TÍTULO -->
-  <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200">
-    <%= typeof title !== 'undefined' ? title : 'Expensas' %>
-  </h1>
-
-  <!-- MENÚ -->
-  <ul class="flex space-x-6 text-gray-700 dark:text-gray-300">
-    <li>
-      <a href="/servicios"
-         class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-        Servicios
-      </a>
-    </li>
-
-    <li>
-      <a href="/asamblea"
-         class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-        Asamblea
-      </a>
-    </li>
-
-    <li>
-      <a href="/expensas"
-         class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-        Expensas
-      </a>
-    </li>
-
-    <li>
-      <a href="/contacto"
-         class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-        Contacto
-      </a>
-    </li>
-  </ul>
-
-  <!-- DARK MODE -->
-  <button id="toggleDark"
-    class="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600">
-    🌙 / ☀️
-  </button>
-
-</div>
-
-  </nav>
+  <%- include('../partials/navbar') %>
 
   <main class="max-w-6xl mx-auto py-8 px-4">
     <%- body %>
   </main>
 
-  <script>
-    // Dark mode toggle
-    const toggle = document.getElementById("toggleDark");
-    if (toggle) {
-      toggle.onclick = () => {
-        const isDark = document.documentElement.classList.toggle("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "light");
-      };
-    }
+  <!-- Scripts Globales -->
+  <script src="/js/main.js"></script>
 
+  <script>
     // Initialize dark mode from localStorage
     (function () {
       const saved = localStorage.getItem("theme");
