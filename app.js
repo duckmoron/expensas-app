@@ -3,16 +3,12 @@ const fs = require('fs').promises;
 const path = require('path');
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const session = require('express-session');
 const fileUpload = require('express-fileupload');
-const multer = require('multer');
-const fsSync = require('fs'); // Add this line for sync operations if needed elsewhere
 const extractText = require('./utils/extractText');
 const { parseEstadoCuentas } = require('./utils/parseEstadoCuentas');
-console.log('parseEstadoCuentas type:', typeof parseEstadoCuentas);
 
 const app = express();
-let datosExpensas = { unidades: [], totales: {} };
-let ultimoArchivo = null; // <-- variable global para mantener el PDF seleccionado
 
 // Configuración de vistas
 app.set('views', path.join(__dirname, 'views'));
@@ -21,47 +17,45 @@ app.use(expressLayouts);
 app.set('layout', 'layouts/layout');
 
 // Middleware
+app.use(session({
+  secret: 'expensas-secret',
+  resave: false,
+  saveUninitialized: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// Configuración de fileUpload (debe estar antes de las rutas)
 app.use(fileUpload({
-  createParentPath: true,  // Crea automáticamente los directorios necesarios
-  limits: { 
-    fileSize: 5 * 1024 * 1024  // 5MB
-  },
+  createParentPath: true,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   abortOnLimit: true,
   responseOnLimit: "El archivo es demasiado grande (máx. 5MB)"
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuración de Multer para imágenes
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const { ps, dpto } = req.body;
-    const dir = path.join(__dirname, 'uploads', `${ps}_${dpto}`);
-    fs.mkdir(dir, { recursive: true }).then(() => cb(null, dir));
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+// ======================================================
+// Middleware para inyectar datos globales en todas las vistas
+// ======================================================
+app.use(async (req, res, next) => {
+  try {
+    const lastJSON = await getActiveJSON(req);
+
+    res.locals.unidades = lastJSON?.data.unidades || [];
+    res.locals.totales = lastJSON?.data.totales || {};
+    res.locals.metadata = lastJSON?.data.metadata || {};
+    res.locals.nombreArchivo = lastJSON?.name || null;
+
+    next();
+  } catch (err) {
+    console.error("Error al setear globals:", err);
+    next();
   }
 });
 
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-      cb(null, true);
-    } else {
-      cb(new Error('Solo se permiten imágenes JPG o PNG'), false);
-    }
-  }
-});
-
-// Crear carpetas necesarias al iniciar
+// ======================================================
+// Inicialización de carpetas
+// ======================================================
 const initFolders = async () => {
-  const folders = ['public/pdf', 'uploads'];
+  const folders = ['json/parserPDF', 'public/uploads'];
   for (const folder of folders) {
     try {
       await fs.mkdir(path.join(__dirname, folder), { recursive: true });
@@ -71,226 +65,234 @@ const initFolders = async () => {
   }
 };
 
-// Rutas
-app.get("/", (req, res) => {
+// ======================================================
+// Funciones auxiliares
+// ======================================================
+const getActiveJSON = async (req) => {
+  const dir = path.join(__dirname, 'json/parserPDF');
+
+  if (req.session?.jsonActivo) {
+    const jsonPath = path.join(dir, req.session.jsonActivo);
+    try {
+      const data = await fs.readFile(jsonPath, 'utf8');
+      return {
+        name: req.session.jsonActivo,
+        data: JSON.parse(data)
+      };
+    } catch {
+      req.session.jsonActivo = null;
+    }
+  }
+
+  return await getLastParsedJSON();
+};
+
+const getLastParsedJSON = async () => {
+  const dir = path.join(__dirname, 'json/parserPDF');
+  try {
+    const files = await fs.readdir(dir);
+    const jsonFiles = files.filter(f => f.endsWith('.json'));
+    if (!jsonFiles.length) return null;
+
+    const fileStats = await Promise.all(
+      jsonFiles.map(async f => ({
+        name: f,
+        mtime: (await fs.stat(path.join(dir, f))).mtime
+      }))
+    );
+
+    fileStats.sort((a, b) => b.mtime - a.mtime);
+    const lastFile = fileStats[0].name;
+    const data = await fs.readFile(path.join(dir, lastFile), 'utf8');
+    return { name: lastFile, data: JSON.parse(data) };
+  } catch {
+    return null;
+  }
+};
+
+const getAllParsedJSONFiles = async () => {
+  const dir = path.join(__dirname, 'json/parserPDF');
+  try {
+    const files = await fs.readdir(dir);
+    return files.filter(f => f.endsWith('.json'));
+  } catch {
+    return [];
+  }
+};
+
+// ======================================================
+// RUTAS
+// ======================================================
+
+// Página principal
+app.get("/", async (req, res) => {
+  const jsonFiles = await getAllParsedJSONFiles();
   res.render("index", {
     title: "Expensas",
     headerTitle: "Cargar Estado de Cuentas",
-    unidades: datosExpensas.unidades || [],
-    totales: datosExpensas.totales || {},
-    nombreArchivo: ultimoArchivo // <-- paso el último archivo cargado al template
+    jsonFiles
   });
 });
 
-// Procesar PDF
+// Procesar PDF o cargar JSON existente
 app.post("/procesar-pdf", async (req, res, next) => {
   try {
+    const { jsonSeleccionado } = req.body;
+
+    // 🟢 USAR JSON EXISTENTE
+    if (jsonSeleccionado) {
+      req.session.jsonActivo = jsonSeleccionado;
+      return res.redirect("/");
+    }
+
+    // 🔵 PROCESAR PDF NUEVO
     if (!req.files?.pdfFile) {
-      throw new Error('No se subió ningún archivo');
+      throw new Error('No se seleccionó PDF ni JSON');
     }
 
     const pdfFile = req.files.pdfFile;
-    console.log("Procesando archivo:", pdfFile.name);
-    
-    // Procesar directamente el buffer
     const text = await extractText(pdfFile.data);
-    console.log("Texto extraído:", text.length, "caracteres");
-    
     const parsedData = parseEstadoCuentas(text);
-    datosExpensas = parsedData;
 
-    // Guardar el PDF
-    const pdfPath = path.join(__dirname, 'public', 'pdf', 'expensas.pdf');
-    await fs.mkdir(path.dirname(pdfPath), { recursive: true });
-    await fs.writeFile(pdfPath, pdfFile.data);
+    const baseName = path.parse(pdfFile.name).name;
+    const jsonPath = path.join(__dirname, 'json/parserPDF', `${baseName}.json`);
 
-    // Guardar nombre del archivo para mantenerlo al volver al índice
-    ultimoArchivo = pdfFile.name;
+    await fs.mkdir(path.dirname(jsonPath), { recursive: true });
+    await fs.writeFile(jsonPath, JSON.stringify(parsedData, null, 2));
 
-    res.redirect('/');
+    req.session.jsonActivo = `${baseName}.json`;
+
+    return res.redirect("/");
 
   } catch (error) {
-    console.error("❌ Error al procesar el PDF:", error);
+    console.error("❌ Error al procesar:", error);
     next(error);
   }
 });
 
+
 // Detalle de unidad
 app.get('/detalle/:uni', async (req, res) => {
+  try {
+    const lastJSON = await getActiveJSON(req);
+    if (!lastJSON) return res.status(404).send('No hay datos de PDF procesados');
+
+    const unidad = lastJSON.data.unidades.find(u => u.uni === req.params.uni);
+    if (!unidad) return res.status(404).send('Unidad no encontrada');
+
     const jsonPath = path.join(__dirname, 'json', 'documentacion_unidades.json');
     let datosGuardados = {};
-    
     try {
-        try {
-            // Use fs.promises.access to check if file exists
-            await fs.access(jsonPath);
-            const fileContent = await fs.readFile(jsonPath, 'utf8');
-            datosGuardados = JSON.parse(fileContent);
-            console.log('Datos cargados del archivo:', datosGuardados);
-        } catch (err) {
-            console.log('Archivo de documentación no encontrado, se creará uno nuevo');
-        }
+      const fileContent = await fs.readFile(jsonPath, 'utf8');
+      datosGuardados = JSON.parse(fileContent);
+    } catch {}
 
-        const unidad = datosExpensas.unidades.find(u => u.uni === req.params.uni);
-        if (!unidad) {
-            return res.status(404).send('Unidad no encontrada');
-        }
+    res.render('detalle', {
+      title: `UNIDAD ${unidad.uni}`,
+      u: { ...unidad, documentacion: datosGuardados[unidad.uni] || {} }
+    });
 
-        res.render('detalle', { 
-            title: `UNIDAD ${unidad.uni}`,
-            u: {
-                ...unidad,
-                documentacion: datosGuardados[unidad.uni] || {}
-            }
-        });
-    } catch (error) {
-        console.error('Error en ruta /detalle/:uni:', error);
-        res.status(500).send('Error al cargar los datos');
-    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al cargar la unidad');
+  }
 });
 
 // Guardar documentación
 app.post('/guardar-documentacion', async (req, res) => {
+  try {
+    const { uni, ps, dpto = '' } = req.body;
+    if (!uni || !ps) return res.status(400).json({ success: false, message: 'Faltan datos requeridos' });
+
+    const jsonPath = path.join(__dirname, 'json', 'documentacion_unidades.json');
+    let data = {};
+
     try {
-        const { uni, ps, dpto = '' } = req.body;
-        
-        if (!uni || !ps) {
-            return res.status(400).json({ 
-                success: false, 
-                message: `Faltan datos requeridos` 
-            });
-        }
+      const fileContent = await fs.readFile(jsonPath, 'utf8');
+      data = JSON.parse(fileContent);
+    } catch {}
 
-        const jsonPath = path.join(__dirname, 'json', 'documentacion_unidades.json');
-        let data = {};
-        
-        try {
-            const fileContent = await fs.readFile(jsonPath, 'utf8');
-            data = JSON.parse(fileContent);
-        } catch (error) {
-            console.log('Creando archivo de documentación...');
-        }
+    // Manejo de imágenes
+    let imagenes = [];
+    if (req.files && Object.keys(req.files).length > 0) {
+      const uploadDir = path.join(__dirname, 'public', 'uploads', uni);
+      await fs.mkdir(uploadDir, { recursive: true });
 
-        // Handle file uploads
-        let imagenes = [];
-        if (req.files && Object.keys(req.files).length > 0) {
-            const uploadDir = path.join(__dirname, 'public', 'uploads', uni);
-            await fs.mkdir(uploadDir, { recursive: true });
+      const files = Array.isArray(req.files.imagenes)
+        ? req.files.imagenes
+        : [req.files.imagenes].filter(Boolean);
 
-            const files = Array.isArray(req.files.imagenes) ? 
-                req.files.imagenes : 
-                [req.files.imagenes].filter(Boolean);
+      for (const file of files) {
+        const fileName = `${Date.now()}-${file.name}`;
+        const filePath = path.join(uploadDir, fileName);
+        await file.mv(filePath);
 
-            for (const file of files) {
-                const fileName = `${Date.now()}-${file.name}`;
-                const filePath = path.join(uploadDir, fileName);
-                await file.mv(filePath);
-                
-                imagenes.push({
-                    name: file.name,
-                    path: `/uploads/${uni}/${fileName}`,
-                    size: file.size,
-                    mimetype: file.mimetype
-                });
-            }
-        }
-
-        // Update or create the unit's data
-        data[uni] = {
-            ...data[uni],  // Keep existing data
-            ...req.body,   // Update with new form data
-            imagenes: [...(data[uni]?.imagenes || []), ...imagenes], // Combine old and new images
-            actualizado: new Date().toISOString()
-        };
-
-        // Save the updated data
-        await fs.mkdir(path.dirname(jsonPath), { recursive: true });
-        await fs.writeFile(jsonPath, JSON.stringify(data, null, 2));
-
-        res.json({ 
-            success: true,
-            message: 'Datos guardados correctamente',
-            data: data[uni]
+        imagenes.push({
+          name: file.name,
+          path: `/uploads/${uni}/${fileName}`,
+          size: file.size,
+          mimetype: file.mimetype
         });
-
-    } catch (error) {
-        console.error('Error al guardar:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error al guardar: ' + error.message 
-        });
+      }
     }
+
+    // Guardar la unidad
+    data[uni] = {
+      ...data[uni],
+      ...req.body,
+      imagenes: [...(data[uni]?.imagenes || []), ...imagenes],
+      actualizado: new Date().toISOString()
+    };
+
+    await fs.mkdir(path.dirname(jsonPath), { recursive: true });
+    await fs.writeFile(jsonPath, JSON.stringify(data, null, 2));
+
+    res.json({ success: true, message: 'Datos guardados correctamente', data: data[uni] });
+
+  } catch (error) {
+    console.error('Error al guardar:', error);
+    res.status(500).json({ success: false, message: 'Error al guardar: ' + error.message });
+  }
 });
 
-// Ruta para eliminar una imagen
+// Eliminar imagen
 app.post('/eliminar-imagen', async (req, res) => {
   try {
     const { uni, imagePath } = req.body;
-    
-    if (!uni || !imagePath) {
-      return res.status(400).json({ success: false, message: 'Faltan parámetros requeridos' });
-    }
+    if (!uni || !imagePath) return res.status(400).json({ success: false, message: 'Faltan parámetros requeridos' });
 
     const jsonPath = path.join(__dirname, 'json', 'documentacion_unidades.json');
     const fileContent = await fs.readFile(jsonPath, 'utf8');
     const data = JSON.parse(fileContent);
 
-    // Verificar si la unidad existe
-    if (!data[uni]) {
-      return res.status(404).json({ success: false, message: 'Unidad no encontrada' });
-    }
+    if (!data[uni]) return res.status(404).json({ success: false, message: 'Unidad no encontrada' });
 
-    // Obtener la ruta relativa de la imagen (sin el prefijo /uploads)
     const relativeImagePath = imagePath.startsWith('/uploads/') ? imagePath.substring(1) : imagePath;
-    
-    // Ruta completa del archivo de imagen
     const fullImagePath = path.join(__dirname, 'public', relativeImagePath);
 
-    // Verificar si el archivo existe
-    try {
-      await fs.access(fullImagePath);
-    } catch (err) {
-      console.error('El archivo no existe:', fullImagePath);
-      // Continuamos aunque el archivo no exista, para limpiar la referencia
-    }
-
-    // Eliminar la referencia de la imagen en el JSON
     if (data[uni].imagenes) {
       data[uni].imagenes = data[uni].imagenes.filter(img => img.path !== imagePath);
       data[uni].actualizado = new Date().toISOString();
     }
 
-    // Guardar los cambios en el JSON
     await fs.writeFile(jsonPath, JSON.stringify(data, null, 2));
 
-    // Intentar eliminar el archivo físico
-    try {
-      await fs.unlink(fullImagePath);
-    } catch (err) {
-      console.error('Error al eliminar el archivo físico:', err);
-      // No fallamos si no se puede eliminar el archivo físico
-    }
+    try { await fs.unlink(fullImagePath); } catch {}
 
     res.json({ success: true, message: 'Imagen eliminada correctamente' });
 
   } catch (error) {
     console.error('Error al eliminar la imagen:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error al eliminar la imagen: ' + error.message 
-    });
+    res.status(500).json({ success: false, message: 'Error al eliminar la imagen: ' + error.message });
   }
 });
 
 // Manejo de errores
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
-  
+
   if (req.xhr || req.headers.accept?.includes('application/json')) {
-    return res.status(500).json({ 
-      success: false, 
-      message: err.message 
-    });
+    return res.status(500).json({ success: false, message: err.message });
   }
 
   res.status(500).render('error', {
@@ -302,9 +304,7 @@ app.use((err, req, res, next) => {
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
 initFolders().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Servidor funcionando en http://localhost:${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`Servidor funcionando en http://localhost:${PORT}`));
 }).catch(err => {
   console.error('Error al iniciar el servidor:', err);
   process.exit(1);

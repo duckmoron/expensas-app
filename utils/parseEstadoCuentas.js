@@ -1,6 +1,12 @@
 // utils/parseEstadoCuentas.js
 function parseEstadoCuentas(text) {
-  if (!text || typeof text !== "string") return { unidades: [], totales: {} };
+  if (!text || typeof text !== "string") {
+    return { unidades: [], totales: {}, metadata: {} };
+  }
+
+  console.log("///////////////////////////////////////////////////");
+  console.log("texto completo del pdf:", text);
+  console.log("///////////////////////////////////////////////////");
 
   const inicioKey = "ESTADO DE CUENTAS Y PRORRATEO";
   const finKey = "Tasa de interés";
@@ -8,17 +14,22 @@ function parseEstadoCuentas(text) {
   const inicio = text.indexOf(inicioKey);
   const fin = text.indexOf(finKey);
 
-  if (inicio === -1) return { unidades: [], totales: {} };
+  if (inicio === -1) {
+    return { unidades: [], totales: {}, metadata: {} };
+  }
 
   const bloque = text.substring(inicio, fin > -1 ? fin : undefined);
-  const allLines = bloque.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const allLines = bloque
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(Boolean);
 
   const montoRegex = /-?\d{1,3}(?:\.\d{3})*,\d{2}/g;
   const porcRegex = /^\d+,\d{2}$/;
   const isPorcentaje = (s) => porcRegex.test(s) && s.indexOf(".") === -1;
 
   // ==========================================================================
-  // TOTALES
+  // TOTALES (SIN CAMBIOS)
   // ==========================================================================
   const totalLine = allLines.find(l =>
     /^TOTAL/i.test(l) || l.toUpperCase().startsWith("TOTAL")
@@ -43,7 +54,7 @@ function parseEstadoCuentas(text) {
   }
 
   // ==========================================================================
-  // UNIDADES
+  // UNIDADES (SIN CAMBIOS)
   // ==========================================================================
   const unitLines = allLines.filter(l => /^\d{3}/.test(l));
   const unidades = [];
@@ -51,13 +62,9 @@ function parseEstadoCuentas(text) {
   for (let rawLine of unitLines) {
     const raw = rawLine;
 
-    // UNI
     const uni = rawLine.substring(0, 3);
-
-    // RESTO después de la UNI
     let resto = rawLine.substring(3).trim();
 
-    // PS
     let ps = "";
     if (resto.startsWith("LO")) {
       ps = "LO";
@@ -70,7 +77,6 @@ function parseEstadoCuentas(text) {
       resto = resto.substring(1).trim();
     }
 
-    // DPTO
     let dpto = "";
     if (resto.startsWith("LOC")) {
       dpto = "LOC";
@@ -80,96 +86,63 @@ function parseEstadoCuentas(text) {
       resto = resto.substring(1).trim();
     }
 
-    // ==========================================================================
-    // MONTOS
-    // ==========================================================================
     const nums = raw.match(montoRegex) || [];
 
-    // Siempre existe sdo_anterior
     let sdo_anterior = nums[0] || "";
-
-    // Detectar SU_PAGO correctamente
     let su_pago = "";
     let idx = 1;
 
     if (nums[1] && nums[1].trim().startsWith("-")) {
-      // Caso normal
       su_pago = nums[1];
       idx = 2;
     } else {
-      // Caso unidad 010 → SU PAGO vacío
       su_pago = "";
-      idx = 1; // La columna siguiente pertenece a sdo_pendiente
+      idx = 1;
     }
 
-    // Capturar sdo_pendiente e interes
     let sdo_pendiente = "";
     let interes = "";
 
     if (su_pago !== "") {
-      // Caso normal: SU PAGO existe
       while (idx < nums.length && !isPorcentaje(nums[idx])) {
         if (!sdo_pendiente) sdo_pendiente = nums[idx++];
-        else if (!interes)  interes = nums[idx++];
+        else if (!interes) interes = nums[idx++];
         else break;
       }
     } else {
-      // Caso SU PAGO vacío (unidad 010)
       sdo_pendiente = nums[idx++] || "";
-      interes       = (nums[idx] && !isPorcentaje(nums[idx])) ? nums[idx++] : "";
+      interes = (nums[idx] && !isPorcentaje(nums[idx])) ? nums[idx++] : "";
     }
 
-    // ==========================================================================
-    // %A / expA / %B / expB / %C / expC
-    // (igual que tu parser original)
-    // ==========================================================================
-    let porc_A = "";
-    let exp_A = "";
-    let porc_B = "";
-    let exp_B = "";
-    let porc_C = "";
-    let exp_C = "";
+    let porc_A = "", exp_A = "";
+    let porc_B = "", exp_B = "";
+    let porc_C = "", exp_C = "";
     let red = "";
 
-    // A
     if (nums[idx] && isPorcentaje(nums[idx])) {
       porc_A = nums[idx++] || "";
-      exp_A  = nums[idx++] || "";
-    } else {
-      if (nums[idx] && nums[idx].indexOf(".") !== -1) {
-        exp_A = nums[idx++] || "";
-      }
+      exp_A = nums[idx++] || "";
+    } else if (nums[idx] && nums[idx].indexOf(".") !== -1) {
+      exp_A = nums[idx++] || "";
     }
 
-    // B
     if (nums[idx] && isPorcentaje(nums[idx])) {
       porc_B = nums[idx++] || "";
-      exp_B  = nums[idx++] || "";
-    } else {
-      if (nums[idx] && nums[idx].indexOf(".") !== -1) {
-        exp_B = nums[idx++] || "";
-      }
+      exp_B = nums[idx++] || "";
+    } else if (nums[idx] && nums[idx].indexOf(".") !== -1) {
+      exp_B = nums[idx++] || "";
     }
 
-    // C
     if (nums[idx] && isPorcentaje(nums[idx])) {
       porc_C = nums[idx++] || "";
-      exp_C  = nums[idx++] || "";
-    } else {
-      if (nums[idx] && nums[idx].indexOf(".") !== -1) {
-        exp_C = nums[idx++] || "";
-      }
+      exp_C = nums[idx++] || "";
+    } else if (nums[idx] && nums[idx].indexOf(".") !== -1) {
+      exp_C = nums[idx++] || "";
     }
 
-    // RED
     red = nums[idx] || "";
-
-    // TOTAL (último monto)
     const total = nums[nums.length - 1] || "";
 
-    // ==========================================================================
-    // NOMBRE (idéntico a tu parser original)
-    // ==========================================================================
     const firstMontoIndex = raw.search(montoRegex);
     let copropietario = "";
 
@@ -186,12 +159,6 @@ function parseEstadoCuentas(text) {
 
     copropietario = copropietario.replace(/\s{2,}/g, " ").trim();
 
-    // ==========================================================================
-    // SALDO TOTAL (pendiente + interés)
-    // ==========================================================================
-    const fixPend = (v) => v && v !== "" ? v : "0,00";
-    const fix = (v) => v || "";
-
     const parseMonto = (s) =>
       Number(String(s || "0").replace(/\./g, "").replace(",", "."));
 
@@ -199,9 +166,6 @@ function parseEstadoCuentas(text) {
       (parseMonto(sdo_pendiente) + parseMonto(interes))
         .toLocaleString("es-AR", { minimumFractionDigits: 2 });
 
-    // ==========================================================================
-    // PUSH
-    // ==========================================================================
     unidades.push({
       uni,
       ps,
@@ -209,8 +173,8 @@ function parseEstadoCuentas(text) {
       copropietario,
       sdo_anterior,
       su_pago,
-      sdo_pendiente: fixPend(sdo_pendiente),
-      interes: fix(interes),
+      sdo_pendiente: sdo_pendiente || "0,00",
+      interes: interes || "",
       saldo_total,
       porc_A,
       exp_A,
@@ -224,7 +188,98 @@ function parseEstadoCuentas(text) {
     });
   }
 
-  return { unidades, totales };
-};
+  // ==========================================================================
+  // ====================== METADATA (NUEVO - AISLADO) =========================
+  // ==========================================================================
+
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const findLine = (rx) => lines.find(l => rx.test(l)) || "";
+
+  // -------------------- FIJOS --------------------
+  const consorcio = {
+    nombre: findLine(/CONSORCIO/i),
+    direccion: findLine(/Domicilio del Consorcio/i).split(":")[1] || "",
+    cuit: findLine(/CUIT:\s*30-/i),
+    clave_suterh: findLine(/Clave SUTERH/i).split(":")[1] || ""
+  };
+
+  const administracion = {
+    nombre: findLine(/ADM\./i),
+    direccion: findLine(/YERBAL/i),
+    mail: findLine(/@/i),
+    telefono: findLine(/Te\.:/i),
+    urgencias: findLine(/URG:/i),
+    rpa: findLine(/R\.P\.A\.|RPA/i),
+    cuit: findLine(/CUIT:\s*23-/i)
+  };
+
+  const banco = {
+    entidad: findLine(/BANCO/i),
+    sucursal: findLine(/SUCURSAL/i),
+    cuenta: findLine(/CTA CTE/i),
+    cbu: findLine(/CBU/i)
+  };
+
+  // -------------------- DINAMICOS --------------------
+  const aviso_pago = {
+    periodo: findLine(/Liquidacion de mes:/i).split(":")[1] || "",
+    vencimiento: findLine(/Vencimiento:/i).split(":")[1] || ""
+  };
+
+  const gastos_mes = {
+    total_gastos: findLine(/^TOTAL DE GASTOS/i).match(montoRegex)?.pop() || "",
+    rubros: []
+  };
+
+  lines.forEach(l => {
+    if (/Total Rubro/i.test(l)) {
+      gastos_mes.rubros.push({
+        raw: l,
+        total: l.match(montoRegex)?.pop() || ""
+      });
+    }
+  });
+
+  const pagos_cobranzas = {
+    saldo_inicial: findLine(/SALDO INICIAL/i).match(montoRegex)?.[0] || "",
+    ingresos_expensas: findLine(/INGRESO POR EXPENSAS DEL MES/i).match(montoRegex)?.[0] || "",
+    ingresos_atrasados: findLine(/INGRESO POR EXPENSAS ATRASADAS/i).match(montoRegex)?.[0] || "",
+    ingresos_intereses: findLine(/INGRESO POR INTERESES/i).match(montoRegex)?.[0] || "",
+    egresos: findLine(/EGRESOS DEL PERIODO/i).match(montoRegex)?.[0] || "",
+    saldo_final: findLine(/SALDO FINAL/i).match(montoRegex)?.[0] || ""
+  };
+
+  const proveedores = [];
+  let inProv = false;
+
+  lines.forEach(l => {
+    if (/Proveedores del Consorcio/i.test(l)) inProv = true;
+    else if (inProv && /Pagina:/i.test(l)) inProv = false;
+    else if (inProv && /\d{2}-\d{8}-\d/i.test(l)) {
+      proveedores.push({ raw: l });
+    }
+  });
+
+  // ==========================================================================
+  // RETURN FINAL
+  // ==========================================================================
+  return {
+    unidades,
+    totales,
+    metadata: {
+      fijos: {
+        consorcio,
+        administracion,
+        banco
+      },
+      dinamicos: {
+        aviso_pago,
+        gastos_mes,
+        pagos_cobranzas,
+        proveedores
+      }
+    }
+  };
+}
 
 module.exports = { parseEstadoCuentas };
