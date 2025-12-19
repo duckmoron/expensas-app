@@ -56,6 +56,24 @@ const jsonService = {
     }
   },
 
+  // Obtener el contenido de TODOS los JSONs para estadísticas
+  getAllJSONData: async () => {
+    try {
+      const files = await fs.readdir(PARSER_DIR);
+      const jsonFiles = files.filter(f => f.endsWith('.json'));
+      
+      const allData = await Promise.all(jsonFiles.map(async f => {
+        const content = await fs.readFile(path.join(PARSER_DIR, f), 'utf8');
+        return JSON.parse(content);
+      }));
+      
+      return allData;
+    } catch (error) {
+      console.error("Error reading all JSON data:", error);
+      return [];
+    }
+  },
+
   // Guardar un nuevo JSON parseado
   saveParsedJSON: async (fileName, data) => {
     const jsonPath = path.join(PARSER_DIR, fileName);
