@@ -13,6 +13,8 @@ const initFolders = require('./utils/initFolders');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Configuración de vistas
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
