@@ -31,6 +31,9 @@ const estadisticasController = {
           finanzas: {
             saldo_inicial: parseMoney(meta.pagos_cobranzas?.saldo_inicial),
             ingresos: parseMoney(meta.pagos_cobranzas?.ingresos_expensas),
+            ingresos_expensas: parseMoney(meta.pagos_cobranzas?.ingresos_expensas),
+            ingresos_atrasados: parseMoney(meta.pagos_cobranzas?.ingresos_atrasados),
+            ingresos_intereses: parseMoney(meta.pagos_cobranzas?.ingresos_intereses),
             // Los egresos suelen venir en negativo, los pasamos a positivo para el gráfico
             egresos: Math.abs(parseMoney(meta.pagos_cobranzas?.egresos)),
             saldo_final: parseMoney(meta.pagos_cobranzas?.saldo_final)

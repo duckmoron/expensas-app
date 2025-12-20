@@ -34,6 +34,23 @@
         <div id="rubrosContainer" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-3 border rounded-md border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
           <!-- Checkboxes generados por JS -->
         </div>
+
+        <!-- Referencias de Rubros -->
+        <details class="group">
+          <summary class="text-xs text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline flex items-center gap-1 select-none w-fit mt-1">
+            <span class="font-medium">Ver referencias de rubros</span>
+          </summary>
+          <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/50 p-3 rounded border border-gray-100 dark:border-gray-700">
+            <div><span class="font-bold">Rubro 1:</span> Remuneraciones al personal y cargas sociales</div>
+            <div><span class="font-bold">Rubro 2:</span> Servicios publicos</div>
+            <div><span class="font-bold">Rubro 3:</span> Abonos de servicios</div>
+            <div><span class="font-bold">Rubro 4:</span> Mantenimiento de partes comunes</div>
+            <div><span class="font-bold">Rubro 6:</span> Gastos bancarios</div>
+            <div><span class="font-bold">Rubro 7:</span> Gastos de limpieza</div>
+            <div><span class="font-bold">Rubro 8:</span> Gastos de administracion</div>
+            <div><span class="font-bold">Rubro 9:</span> Pagos del periodo por seguro</div>
+          </div>
+        </details>
       </div>
     </div>
   </div>
@@ -94,6 +111,14 @@
 
   </div>
 
+  <!-- Gráfico: Evolución de Pagos y Cobranzas -->
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 mt-8">
+    <h3 class="text-lg font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Evolución de Pagos y Cobranzas</h3>
+    <div class="relative h-72 w-full">
+      <canvas id="chartPagosCobranzas"></canvas>
+    </div>
+  </div>
+
   <!-- SECCIÓN EXPENSAS -->
   <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700 mt-8">
     <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">
@@ -136,3 +161,118 @@
   window.statsData = <%- statsData %>;
 </script>
 <script src="/js/estadisticas.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('chartPagosCobranzas');
+    if (!ctx || !window.statsData) return;
+
+    // 1. Pre-procesamiento: Convertir metadata de string a objeto si es necesario
+    window.statsData.forEach(d => {
+      if (d.metadata && typeof d.metadata === 'string') {
+        try {
+          d.metadata = JSON.parse(d.metadata);
+        } catch (e) {
+          console.error("Error parseando metadata para ID:", d.id, e);
+          d.metadata = {};
+        }
+      }
+    });
+
+    const parseMoney = (val) => {
+      if (!val) return 0;
+      if (typeof val === 'number') return val;
+      // Limpieza robusta: quitar puntos, cambiar coma por punto, eliminar caracteres no numéricos
+      let clean = String(val).trim();
+      clean = clean.replace(/\./g, ''); 
+      clean = clean.replace(',', '.');
+      // Permitir solo números, punto y signo menos (al inicio)
+      clean = clean.replace(/[^0-9.-]/g, '');
+      return parseFloat(clean) || 0; 
+    };
+
+    // Helper para buscar pagos_cobranzas donde sea que esté
+    const getPC = (d) => {
+      // 1. Intentar estructura original (metadata.dinamicos.pagos_cobranzas)
+      if (d.metadata?.dinamicos?.pagos_cobranzas) return d.metadata.dinamicos.pagos_cobranzas;
+      
+      // 2. Intentar estructura 'finanzas' (detectada en debug)
+      if (d.finanzas) {
+        return {
+          saldo_inicial: d.finanzas.saldo_inicial,
+          ingresos_expensas: d.finanzas.ingresos_expensas || d.finanzas.ingresos,
+          ingresos_atrasados: d.finanzas.ingresos_atrasados || 0,
+          ingresos_intereses: d.finanzas.ingresos_intereses || 0,
+          egresos: d.finanzas.egresos,
+          saldo_final: d.finanzas.saldo_final
+        };
+      }
+
+      // 3. Fallback a raiz
+      return d.pagos_cobranzas || {};
+    };
+
+    // Obtener etiquetas (Periodos)
+    const labels = window.statsData.map(d => {
+      const root = d.metadata || d;
+      return root.dinamicos?.aviso_pago?.periodo || root.periodo || 'Periodo';
+    });
+
+    const datasets = [
+      {
+        label: 'Saldo Inicial',
+        data: window.statsData.map(d => parseMoney(getPC(d).saldo_inicial)),
+        borderColor: '#6366f1', // Indigo
+        backgroundColor: '#6366f1',
+        tension: 0.3
+      },
+      {
+        label: 'Ingresos Expensas',
+        data: window.statsData.map(d => parseMoney(getPC(d).ingresos_expensas)),
+        borderColor: '#10b981', // Emerald
+        backgroundColor: '#10b981',
+        tension: 0.3
+      },
+      {
+        label: 'Ingresos Atrasados',
+        data: window.statsData.map(d => parseMoney(getPC(d).ingresos_atrasados)),
+        borderColor: '#f59e0b', // Amber
+        backgroundColor: '#f59e0b',
+        tension: 0.3
+      },
+      {
+        label: 'Ingresos Intereses',
+        data: window.statsData.map(d => parseMoney(getPC(d).ingresos_intereses)),
+        borderColor: '#8b5cf6', // Violet
+        backgroundColor: '#8b5cf6',
+        tension: 0.3
+      },
+      {
+        label: 'Egresos',
+        data: window.statsData.map(d => parseMoney(getPC(d).egresos)),
+        borderColor: '#ef4444', // Red
+        backgroundColor: '#ef4444',
+        tension: 0.3
+      },
+      {
+        label: 'Saldo Final',
+        data: window.statsData.map(d => parseMoney(getPC(d).saldo_final)),
+        borderColor: '#3b82f6', // Blue
+        backgroundColor: '#3b82f6',
+        borderWidth: 3,
+        tension: 0.3
+      }
+    ];
+
+    new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: { y: { ticks: { callback: (val) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumSignificantDigits: 3 }).format(val) } } },
+        plugins: { tooltip: { callbacks: { label: (ctx) => (ctx.dataset.label || '') + ': ' + new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(ctx.parsed.y) } }, legend: { position: 'bottom' } }
+      }
+    });
+  });
+</script>
