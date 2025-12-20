@@ -27,9 +27,11 @@
           Listado ya procesado
         </button>
       <% } %>
-      <button type="button" id="btnSubirPDF" class="rounded-md bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm">
-        Subir un PDF nuevo
-      </button>
+      <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+        <button type="button" id="btnSubirPDF" class="rounded-md bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+          Subir un PDF nuevo
+        </button>
+      <% } %>
     </div>
 
     <!-- SECCIÓN JSON EXISTENTE -->

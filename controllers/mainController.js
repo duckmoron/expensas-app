@@ -25,6 +25,11 @@ const mainController = {
       }
 
       // 🔵 PROCESAR PDF NUEVO
+      // Verificar autenticación para subir archivos
+      if (!req.session.user) {
+        return res.status(403).render('errors/error', { message: 'Modo Lectura: Debe iniciar sesión para subir nuevos archivos.' });
+      }
+
       if (!req.files?.pdfFile) {
         throw new Error('No se seleccionó PDF ni JSON');
       }

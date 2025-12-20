@@ -145,7 +145,7 @@
         <div class="mt-2">
           <input type="email" id="email" name="email"
             value="<%= u.documentacion?.email || '' %>"
-            class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm">
+            class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>>
         </div>
       </div>
 
@@ -157,7 +157,7 @@
         <div class="mt-2">
           <input type="tel" id="telefono" name="telefono"
             value="<%= u.documentacion?.telefono || '' %>"
-            class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm">
+            class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>>
         </div>
       </div>
 
@@ -185,7 +185,7 @@
       </label>
       <div class="mt-2">
         <textarea id="estadoActual" name="estadoActual" rows="3"
-          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.estadoActual || 'En buen estado' %></textarea>
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>><%= u.documentacion?.estadoActual || 'En buen estado' %></textarea>
       </div>
     </div>
 
@@ -199,7 +199,7 @@
       </label>
       <div class="mt-2">
         <textarea id="trabajosNecesarios" name="trabajosNecesarios" rows="3"
-          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.trabajosNecesarios || 'Ninguno' %></textarea>
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>><%= u.documentacion?.trabajosNecesarios || 'Ninguno' %></textarea>
       </div>
     </div>
 
@@ -213,7 +213,7 @@
       </label>
       <div class="mt-2">
         <textarea id="trabajosEnProceso" name="trabajosEnProceso" rows="3"
-          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.trabajosEnProceso || 'Ninguno' %></textarea>
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>><%= u.documentacion?.trabajosEnProceso || 'Ninguno' %></textarea>
       </div>
     </div>
 
@@ -227,7 +227,7 @@
       </label>
       <div class="mt-2">
         <textarea id="trabajosCompletados" name="trabajosCompletados" rows="3"
-          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.trabajosCompletados || 'Ninguno' %></textarea>
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>><%= u.documentacion?.trabajosCompletados || 'Ninguno' %></textarea>
       </div>
     </div>
 
@@ -241,7 +241,7 @@
       </label>
       <div class="mt-2">
         <textarea id="observaciones" name="observaciones" rows="3"
-          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm"><%= u.documentacion?.observaciones || '' %></textarea>
+          class="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-white sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed" <%= !isAuthenticated ? 'disabled' : '' %>><%= u.documentacion?.observaciones || '' %></textarea>
       </div>
     </div>
 
@@ -277,11 +277,13 @@
                      class="h-32 w-full object-cover rounded-lg cursor-pointer transition hover:opacity-90"
                      data-src="<%= img.path %>">
 
-                <button type="button"
-                  class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
-                  onclick="event.stopPropagation(); eliminarImagen(this, '<%= u.uni %>', '<%= img.path %>')">
-                  ✕
-                </button>
+                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                  <button type="button"
+                    class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                    onclick="event.stopPropagation(); eliminarImagen(this, '<%= u.uni %>', '<%= img.path %>')">
+                    ✕
+                  </button>
+                <% } %>
               </div>
             </div>
           <% }); %>
@@ -290,6 +292,7 @@
     <% } %>
 
     <!-- FILE UPLOAD -->
+    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
     <div class="flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
       <div class="text-center space-y-2">
 
@@ -306,6 +309,7 @@
         <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF hasta 10MB</p>
       </div>
     </div>
+    <% } %>
 
     <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
 
@@ -314,6 +318,7 @@
   <!-- ============================= -->
   <!-- BOTONES -->
   <!-- ============================= -->
+  <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
   <div class="flex justify-end gap-x-3 pt-10 border-t border-gray-200 dark:border-gray-700">
 
     <button type="button" id="btnCancelar"
@@ -327,6 +332,7 @@
     </button>
 
   </div>
+  <% } %>
 
 </form>
 

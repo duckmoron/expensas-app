@@ -6,6 +6,8 @@ const routes = require('./routes/index');
 const globalData = require('./middlewares/globalData');
 const sessionConfig = require('./middlewares/sessionConfig');
 const uploadConfig = require('./middlewares/uploadConfig');
+const authMiddleware = require('./middlewares/authMiddleware');
+const authController = require('./controllers/authController');
 const { notFound, serverError } = require('./middlewares/errorHandlers');
 const initFolders = require('./utils/initFolders');
 
@@ -20,12 +22,18 @@ app.set('layout', 'layouts/layout');
 // Middlewares
 app.use(sessionConfig);
 app.use(globalData);
+app.use(authMiddleware); // Registrar authMiddleware globalmente
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(uploadConfig);
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// RUTAS DE AUTENTICACIÓN
+app.get('/login', authController.loginForm);
+app.post('/login', authController.login);
+app.get('/logout', authController.logout);
 
 // RUTAS
 app.use('/', routes);

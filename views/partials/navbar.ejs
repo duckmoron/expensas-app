@@ -50,6 +50,27 @@
           Contacto
         </a>
       </li> -->
+
+      <% if (typeof isAuthenticated !== 'undefined' && !isAuthenticated) { %>
+        <li class="flex items-center">
+          <span class="text-xs font-semibold bg-gray-100 text-gray-500 px-2 py-1 rounded border border-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600 select-none">Modo Lectura</span>
+        </li>
+      <% } %>
+
+      <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+        <li>
+          <a href="/logout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition font-medium">
+            Salir
+          </a>
+        </li>
+      <% } else { %>
+        <li>
+          <a href="/login" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition font-medium">
+            Ingresar
+          </a>
+        </li>
+      <% } %>
+
     </ul>
 
     <!-- DARK MODE -->

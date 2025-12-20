@@ -32,6 +32,10 @@ const unidadesController = {
 
   guardarDocumentacion: async (req, res) => {
     try {
+      if (!req.session.user) {
+        return res.status(403).json({ success: false, message: 'Modo Lectura: Debe iniciar sesión para realizar cambios.' });
+      }
+
       const { uni, ps } = req.body;
       if (!uni || !ps) return res.status(400).json({ success: false, message: 'Faltan datos requeridos' });
 
@@ -81,6 +85,10 @@ const unidadesController = {
 
   eliminarImagen: async (req, res) => {
     try {
+      if (!req.session.user) {
+        return res.status(403).json({ success: false, message: 'Modo Lectura: Debe iniciar sesión para eliminar imágenes.' });
+      }
+
       const { uni, imagePath } = req.body;
       if (!uni || !imagePath) return res.status(400).json({ success: false, message: 'Faltan parámetros requeridos' });
 
