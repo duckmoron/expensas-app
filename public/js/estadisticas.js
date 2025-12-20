@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actualizar Gráficos
     renderChartGastos(labels, gastosTotales);
     renderChartRubros(filteredData, selectedRubros);
+    renderChartRubrosEvolution(labels, filteredData, selectedRubros);
     renderChartFinanzas(labels, filteredData); // Finanzas no se filtra por rubro, solo fecha
     
     // Nuevos Gráficos de Expensas
@@ -217,6 +218,56 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: {
           legend: { display: true },
           tooltip: { callbacks: { label: (c) => `${c.dataset.label}: $ ${c.raw.toLocaleString('es-AR', {maximumFractionDigits: 0})}` } }
+        }
+      }
+    });
+  }
+
+  function renderChartRubrosEvolution(labels, dataSubset, activeRubros) {
+    const ctx = document.getElementById('chartRubrosEvolution');
+    if (!ctx) return;
+
+    if (charts.rubrosEvolution) charts.rubrosEvolution.destroy();
+
+    // Paleta de colores para diferenciar líneas
+    const colors = [
+      '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6', '#f97316'
+    ];
+
+    const datasets = activeRubros.map((rubro, index) => {
+      const data = dataSubset.map(d => {
+        const r = d.gastos.rubros.find(item => item.label === rubro);
+        return r ? r.total : 0;
+      });
+
+      return {
+        label: rubro,
+        data: data,
+        borderColor: colors[index % colors.length],
+        backgroundColor: colors[index % colors.length],
+        tension: 0.3,
+        fill: false,
+        pointRadius: 3
+      };
+    });
+
+    charts.rubrosEvolution = new Chart(ctx, {
+      type: 'line',
+      data: { labels: labels, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          tooltip: {
+            mode: 'index', // Muestra todos los rubros al pasar el mouse por un mes
+            intersect: false,
+            callbacks: { label: (c) => `${c.dataset.label}: $ ${c.raw.toLocaleString('es-AR')}` }
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
         }
       }
     });
@@ -318,18 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: {
           legend: { display: false },
           tooltip: { callbacks: { label: (c) => `$ ${c.raw.toLocaleString('es-AR')}` } }
-        },
-        onClick: (e, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const record = dataSubset[index];
-            if (record && record.archivo) {
-              window.location.href = `/detalle/${uniId}?json=${record.archivo}`;
-            }
-          }
-        },
-        onHover: (event, chartElement) => {
-          event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
         }
       }
     });
@@ -363,6 +402,18 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: {
           legend: { display: false },
           tooltip: { callbacks: { label: (c) => `$ ${c.raw.toLocaleString('es-AR')}` } }
+        },
+        onClick: (e, elements) => {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const record = dataSubset[index];
+            if (record && record.archivo) {
+              window.location.href = `/detalle/${uniId}?json=${record.archivo}`;
+            }
+          }
+        },
+        onHover: (event, chartElement) => {
+          event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
         }
       }
     });
@@ -370,4 +421,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Inicializar
   updateDashboard();
+
+  // Observer para cambios de tema (Dark Mode)
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        const isDark = document.documentElement.classList.contains('dark');
+        const newTextColor = isDark ? '#e5e7eb' : '#374151';
+        const newGridColor = isDark ? '#374151' : '#e5e7eb';
+
+        Chart.defaults.color = newTextColor;
+        Chart.defaults.borderColor = newGridColor;
+
+        updateDashboard();
+      }
+    });
+  });
+  
+  observer.observe(document.documentElement, { attributes: true });
 });
