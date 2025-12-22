@@ -99,10 +99,33 @@
   </div>
 
   <!-- BUSCADOR -->
-  <input id="searchInput" type="text" placeholder="Buscar por nombre, UNI, piso o dpto…" 
-    class="mb-4 w-full px-4 py-2 rounded-lg border border-gray-300 
-           dark:border-gray-700 bg-white dark:bg-gray-800 
-           text-gray-900 dark:text-gray-200" />
+  <div class="flex flex-col md:flex-row gap-4 mb-4 items-center">
+    <input id="searchInput" type="text" placeholder="Buscar por nombre, UNI, piso o dpto…" 
+      class="flex-1 px-4 py-2 rounded-lg border border-gray-300 
+             dark:border-gray-700 bg-white dark:bg-gray-800 
+             text-gray-900 dark:text-gray-200" />
+
+    <div class="flex items-center gap-2 w-full md:w-auto">
+      <select id="estadoFilter" 
+        class="flex-1 md:w-auto px-4 py-2 rounded-lg border border-gray-300 
+               dark:border-gray-700 bg-white dark:bg-gray-800 
+               text-gray-900 dark:text-gray-200">
+        <option value="">Todos los estados</option>
+        <option value="Trabajos urgentes">Trabajos urgentes</option>
+        <option value="Trabajos pendientes">Trabajos pendientes</option>
+        <option value="Trabajos en proceso">Trabajos en proceso</option>
+        <option value="Trabajos finalizados">Trabajos finalizados</option>
+        <option value="Informe presentado por Co-propietario">Informe presentado</option>
+        <option value="Informe sin presentar por el Co-propietario">Sin informe</option>
+      </select>
+      <button id="btnClearFilters" type="button" class="hidden p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors" title="Limpiar filtros">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <span id="filterCount" class="text-sm font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap"></span>
+    </div>
+  </div>
 
   <!-- TABLA -->
   <div class="overflow-hidden rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -120,6 +143,7 @@
           <th class="px-4 py-3 text-right cursor-pointer sort" data-sort="total">
             Total a PAGAR <span class="sort-icon opacity-40">⇅</span>
           </th>
+          <th class="px-4 py-3 text-left">Estado Informe</th>
         </tr>
       </thead>
 
@@ -131,18 +155,29 @@
             </td>
           </tr>
         <% } else { unidades.forEach(u=> { %>
+          <% 
+            const estado = u.documentacion?.estadoInforme || 'Informe sin presentar por el Co-propietario';
+            let colorClass = "text-gray-300 dark:text-gray-700";
+            if (estado === "Trabajos urgentes") colorClass = "text-red-600 dark:text-red-400 font-bold";
+            else if (estado === "Trabajos finalizados") colorClass = "text-green-600 dark:text-green-400";
+            else if (estado === "Trabajos en proceso") colorClass = "text-yellow-600 dark:text-yellow-400";
+            else if (estado === "Trabajos pendientes") colorClass = "text-orange-600 dark:text-orange-400";
+            else if (estado === "Informe presentado por Co-propietario") colorClass = "text-blue-600 dark:text-blue-400";
+          %>
           <tr class="fila hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition"
               onclick="location.href='/detalle/<%= u.uni %>'"
               data-search="<%= (u.uni + ' ' + u.ps + ' ' + u.dpto + ' ' + u.copropietario).toLowerCase() %>"
               data-uni="<%= u.uni %>"
               data-copropietario="<%= u.copropietario.toLowerCase() %>"
-              data-total="<%= u.total ? u.total.replace(/\./g,'').replace(',','.') : 0 %>">
+              data-total="<%= u.total ? u.total.replace(/\./g,'').replace(',','.') : 0 %>"
+              data-estado="<%= estado %>">
 
             <td class="px-4 py-3 font-semibold"><%= u.uni %></td>
             <td class="px-4 py-3"><%= u.ps %></td>
             <td class="px-4 py-3"><%= u.dpto %></td>
             <td class="px-4 py-3"><%= u.copropietario %></td>
             <td class="px-4 py-3 text-right"><%= u.total %></td>
+            <td class="px-4 py-3 text-xs font-medium <%= colorClass %>"><%= estado %></td>
 
           </tr>
         <% }) } %>

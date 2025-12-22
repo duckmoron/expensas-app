@@ -36,7 +36,16 @@ const unidadesController = {
         return res.status(403).json({ success: false, message: 'Modo Lectura: Debe iniciar sesión para realizar cambios.' });
       }
 
-      const { uni, ps } = req.body;
+      // Extraemos explícitamente los campos para asegurar que 'estadoInforme' se procese
+      const { 
+        uni, ps, dpto, 
+        email, telefono, 
+        estadoInforme, 
+        estadoActual, 
+        trabajosNecesarios, trabajosEnProceso, trabajosCompletados, 
+        observaciones 
+      } = req.body;
+
       if (!uni || !ps) return res.status(400).json({ success: false, message: 'Faltan datos requeridos' });
 
       let data = await jsonService.getDocumentation();
@@ -68,7 +77,13 @@ const unidadesController = {
       // Actualizar datos
       data[uni] = {
         ...data[uni],
-        ...req.body,
+        uni, ps, dpto,
+        email, telefono,
+        // Aseguramos que se guarde el estado, o mantenemos el anterior, o el default
+        estadoInforme: estadoInforme || data[uni].estadoInforme || "Informe sin presentar por el Co-propietario",
+        estadoActual,
+        trabajosNecesarios, trabajosEnProceso, trabajosCompletados,
+        observaciones,
         imagenes: [...(data[uni]?.imagenes || []), ...imagenes],
         actualizado: new Date().toISOString()
       };

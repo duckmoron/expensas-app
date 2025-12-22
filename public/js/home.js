@@ -3,17 +3,51 @@ document.addEventListener('DOMContentLoaded', () => {
      BUSCADOR
      ========================================= */
   const input = document.getElementById("searchInput");
+  const estadoFilter = document.getElementById("estadoFilter");
+  const filterCount = document.getElementById("filterCount");
+  const btnClear = document.getElementById("btnClearFilters");
   const filas = document.querySelectorAll(".fila");
 
-  if (input) {
-    input.addEventListener("input", () => {
-      const val = input.value.toLowerCase().trim();
-      filas.forEach(f => {
-        const txt = f.dataset.search;
-        f.style.display = txt.includes(val) ? "" : "none";
-      });
+  function filterTable() {
+    const searchVal = input ? input.value.toLowerCase().trim() : "";
+    const estadoVal = estadoFilter ? estadoFilter.value : "";
+    let visibleCount = 0;
+
+    filas.forEach(f => {
+      const txt = f.dataset.search || "";
+      const estado = f.dataset.estado || "";
+
+      const matchesSearch = txt.includes(searchVal);
+      const matchesEstado = estadoVal === "" || estado === estadoVal;
+
+      if (matchesSearch && matchesEstado) {
+        f.style.display = "";
+        visibleCount++;
+      } else {
+        f.style.display = "none";
+      }
+    });
+
+    if (filterCount) filterCount.textContent = `(${visibleCount})`;
+
+    if (btnClear) {
+      if (searchVal || estadoVal) btnClear.classList.remove('hidden');
+      else btnClear.classList.add('hidden');
+    }
+  }
+
+  if (input) input.addEventListener("input", filterTable);
+  if (estadoFilter) estadoFilter.addEventListener("change", filterTable);
+  if (btnClear) {
+    btnClear.addEventListener("click", () => {
+      if (input) input.value = "";
+      if (estadoFilter) estadoFilter.value = "";
+      filterTable();
     });
   }
+  
+  // Inicializar contador al cargar
+  filterTable();
 
   /* =========================================
      ORDENAMIENTO

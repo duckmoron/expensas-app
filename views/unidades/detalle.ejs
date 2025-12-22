@@ -178,6 +178,39 @@
 
   <div class="space-y-6">
 
+    <!-- ESTADO DEL INFORME -->
+    <div>
+      <label for="estadoInforme" class="block text-sm font-medium text-gray-900 dark:text-gray-300">
+        Estado del Informe
+      </label>
+      <div class="mt-2">
+        <% 
+          const estadosPosibles = [
+            "Informe sin presentar por el Co-propietario",
+            "Informe presentado por Co-propietario",
+            "Trabajos pendientes",
+            "Trabajos en proceso",
+            "Trabajos urgentes",
+            "Trabajos finalizados"
+          ];
+          const estadoSeleccionado = u.documentacion?.estadoInforme || "Informe sin presentar por el Co-propietario";
+
+          let colorClass = "border-gray-300 dark:border-gray-600 dark:text-white focus:border-indigo-500 focus:ring-indigo-500";
+          if (estadoSeleccionado === "Trabajos urgentes") colorClass = "border-red-500 text-red-700 dark:text-red-400 focus:border-red-500 focus:ring-red-500";
+          else if (estadoSeleccionado === "Trabajos finalizados") colorClass = "border-green-500 text-green-700 dark:text-green-400 focus:border-green-500 focus:ring-green-500";
+          else if (estadoSeleccionado === "Trabajos en proceso") colorClass = "border-yellow-500 text-yellow-700 dark:text-yellow-400 focus:border-yellow-500 focus:ring-yellow-500";
+          else if (estadoSeleccionado === "Trabajos pendientes") colorClass = "border-orange-500 text-orange-700 dark:text-orange-400 focus:border-orange-500 focus:ring-orange-500";
+          else if (estadoSeleccionado === "Informe presentado por Co-propietario") colorClass = "border-blue-500 text-blue-700 dark:text-blue-400 focus:border-blue-500 focus:ring-blue-500";
+        %>
+        <select id="estadoInforme" name="estadoInforme"
+          class="block w-full rounded-md bg-white dark:bg-gray-700 py-2 px-3 shadow-sm sm:text-sm disabled:opacity-60 disabled:cursor-not-allowed <%= colorClass %>" <%= !isAuthenticated ? 'disabled' : '' %>>
+          <% estadosPosibles.forEach(estado => { %>
+            <option value="<%= estado %>" <%= estado === estadoSeleccionado ? 'selected' : '' %>><%= estado %></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+
     <!-- ESTADO ACTUAL -->
     <div>
       <label class="block text-sm font-medium text-gray-900 dark:text-gray-300">
@@ -360,3 +393,33 @@
 </script>
 
 <script src="/js/detalle.js"></script>
+
+<script>
+  // Script para actualizar el color del selector al cambiar
+  document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('estadoInforme');
+    if (select) {
+      select.addEventListener('change', function() {
+        const val = this.value;
+        // Limpiar clases de color específicas
+        this.classList.remove(
+          'border-red-500', 'text-red-700', 'dark:text-red-400', 'focus:border-red-500', 'focus:ring-red-500',
+          'border-green-500', 'text-green-700', 'dark:text-green-400', 'focus:border-green-500', 'focus:ring-green-500',
+          'border-yellow-500', 'text-yellow-700', 'dark:text-yellow-400', 'focus:border-yellow-500', 'focus:ring-yellow-500',
+          'border-orange-500', 'text-orange-700', 'dark:text-orange-400', 'focus:border-orange-500', 'focus:ring-orange-500',
+          'border-blue-500', 'text-blue-700', 'dark:text-blue-400', 'focus:border-blue-500', 'focus:ring-blue-500',
+          'border-gray-300', 'dark:border-gray-600', 'dark:text-white', 'focus:border-indigo-500', 'focus:ring-indigo-500'
+        );
+
+        let newClasses = ['border-gray-300', 'dark:border-gray-600', 'dark:text-white', 'focus:border-indigo-500', 'focus:ring-indigo-500'];
+        if (val === 'Trabajos urgentes') newClasses = ['border-red-500', 'text-red-700', 'dark:text-red-400', 'focus:border-red-500', 'focus:ring-red-500'];
+        else if (val === 'Trabajos finalizados') newClasses = ['border-green-500', 'text-green-700', 'dark:text-green-400', 'focus:border-green-500', 'focus:ring-green-500'];
+        else if (val === 'Trabajos en proceso') newClasses = ['border-yellow-500', 'text-yellow-700', 'dark:text-yellow-400', 'focus:border-yellow-500', 'focus:ring-yellow-500'];
+        else if (val === 'Trabajos pendientes') newClasses = ['border-orange-500', 'text-orange-700', 'dark:text-orange-400', 'focus:border-orange-500', 'focus:ring-orange-500'];
+        else if (val === 'Informe presentado por Co-propietario') newClasses = ['border-blue-500', 'text-blue-700', 'dark:text-blue-400', 'focus:border-blue-500', 'focus:ring-blue-500'];
+
+        this.classList.add(...newClasses);
+      });
+    }
+  });
+</script>

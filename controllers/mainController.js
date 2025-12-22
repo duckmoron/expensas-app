@@ -6,12 +6,48 @@ const jsonService = require('../services/jsonService');
 
 const mainController = {
   index: async (req, res) => {
-    const jsonFiles = await jsonService.getAllParsedJSONFiles();
-    res.render("home/index", {
-      title: "Expensas",
-      headerTitle: "Cargar Estado de Cuentas",
-      jsonFiles
-    });
+    try {
+      const jsonFiles = await jsonService.getAllParsedJSONFiles();
+      const lastJSON = await jsonService.getActiveJSON(req.session);
+
+      let unidades = [];
+      let totales = {};
+      let metadata = {};
+      let nombreArchivo = req.session.jsonActivo || null;
+
+      // Intentar recuperar el nombre del archivo si no está en sesión y el objeto lo tiene
+      if (!nombreArchivo && lastJSON && lastJSON.__filename) {
+        nombreArchivo = lastJSON.__filename;
+      }
+
+      // Adaptarse a la estructura del JSON (puede tener propiedad .data o ser plana)
+      const dataRoot = (lastJSON && lastJSON.data) ? lastJSON.data : lastJSON;
+
+      if (dataRoot && dataRoot.unidades) {
+        const documentacion = await jsonService.getDocumentation();
+        unidades = (dataRoot.unidades || []).map(u => ({
+          ...u,
+          documentacion: documentacion[u.uni] || {}
+        }));
+        totales = dataRoot.totales || {};
+        // Buscar metadata en la raíz (lastJSON) o dentro de los datos (dataRoot)
+        metadata = lastJSON.metadata || dataRoot.metadata || {};
+      }
+
+      res.render("home/index", {
+        title: "Expensas",
+        headerTitle: "Cargar Estado de Cuentas",
+        jsonFiles,
+        unidades,
+        totales,
+        metadata,
+        nombreArchivo,
+        isAuthenticated: req.session && req.session.user
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error al cargar la página principal");
+    }
   },
 
   procesarPdf: async (req, res, next) => {

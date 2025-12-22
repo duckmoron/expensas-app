@@ -214,6 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.text('ESTADO DE LA UNIDAD', margin, currentY);
         currentY += 10;
         doc.setFontSize(11);
+        
+        doc.text(`Estado del Informe: ${unit.documentacion?.estadoInforme || 'Informe sin presentar por el Co-propietario'}`, margin, currentY);
+        currentY += 10;
+
         currentY = addTextWithLineBreaks(doc, unit.documentacion?.estadoActual || 'No especificado', margin, currentY, maxWidth) + 15;
 
         // TABLA
