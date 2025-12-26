@@ -1,0 +1,93 @@
+[
+  {
+    "id": "20-10151590-8",
+    "nombre": "ASCENSORES LUC",
+    "direccion": "GUEVARA 1623 DPTO 5 B CABA",
+    "cuit": "20-10151590-8",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": "",
+    "observaciones": ""
+  },
+  {
+    "id": "30-70783114-2",
+    "nombre": "SIPAC SERV. COMPUTACION SRL",
+    "direccion": "CONGRESO 2171",
+    "cuit": "30-70783114-2",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": ""
+  },
+  {
+    "id": "27-23347639-6",
+    "nombre": "GESTIONARV",
+    "direccion": "HORTIGUERA 669 PISO 1 CABA",
+    "cuit": "27-23347639-6",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": ""
+  },
+  {
+    "id": "20-36824581-0",
+    "nombre": "FARIAS MARCELO GABRIEL ",
+    "direccion": "VICTORINO DE LA PLAZA 3831 MERLO",
+    "cuit": "20-36824581-0",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": "",
+    "observaciones": "",
+    "estrellas": 1
+  },
+  {
+    "id": "20-16124680-9",
+    "nombre": "LOS DOS ASES",
+    "direccion": "ARISMENDI 2656 PISO 6 DPTO A CABA",
+    "cuit": "20-16124680-9",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": "",
+    "observaciones": "",
+    "estrellas": 0
+  },
+  {
+    "id": "27-23888351-8",
+    "nombre": "FUMIGACIONES LOMAR",
+    "direccion": "BLANCO ENCALADA 3621",
+    "cuit": "27-23888351-8",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": "",
+    "observaciones": "",
+    "estrellas": 0
+  },
+  {
+    "id": "27-23223915-3",
+    "nombre": "MLG GRAFICA LIBRERIA",
+    "direccion": "GARCIA LORCA FEDERICO 43",
+    "cuit": "27-23223915-3",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": "",
+    "observaciones": "",
+    "estrellas": 0
+  },
+  {
+    "id": "20-22756701-6",
+    "nombre": "LA FEDERAL DESTAPACIONES",
+    "direccion": "OLAZABAL 3449 PISO 2 DPTO A",
+    "cuit": "20-22756701-6",
+    "rubro": "Sin clasificar",
+    "telefono": "",
+    "email": "",
+    "contacto": "",
+    "observaciones": "",
+    "estrellas": 0
+  }
+]
