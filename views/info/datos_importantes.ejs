@@ -1,9 +1,9 @@
-<div class="max-w-4xl mx-auto space-y-8">
 
+  <div class="space-y-8">
   <!-- Encabezado -->
-  <div class="text-center mb-8">
-    <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Datos Institucionales</h2>
-    <p class="text-gray-600 dark:text-gray-400 mt-2">Información fija del consorcio y administración</p>
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">Datos Institucionales</h2>
+    <p class="text-gray-600 dark:text-gray-400">Información fija del consorcio y administración</p>
   </div>
 
   <% if (!metadata || !metadata.fijos) { %>
@@ -24,13 +24,11 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
       <!-- CONSORCIO -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="bg-indigo-600 px-6 py-4">
-          <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-            <i class="fas fa-building"></i> Consorcio
-          </h3>
-        </div>
-        <div class="p-6 space-y-4">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+          <i class="fas fa-building"></i> Consorcio
+        </h3>
+        <div class="space-y-4">
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Nombre</p>
             <p class="text-gray-900 dark:text-gray-200 font-medium"><%= metadata.fijos.consorcio?.nombre || '-' %></p>
@@ -53,13 +51,11 @@
       </div>
 
       <!-- ADMINISTRACIÓN -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="bg-emerald-600 px-6 py-4">
-          <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-            <i class="fas fa-user-tie"></i> Administración
-          </h3>
-        </div>
-        <div class="p-6 space-y-4">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold mb-4 text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+          <i class="fas fa-user-tie"></i> Administración
+        </h3>
+        <div class="space-y-4">
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Nombre</p>
             <p class="text-gray-900 dark:text-gray-200 font-medium"><%= metadata.fijos.administracion?.nombre || '-' %></p>
@@ -82,13 +78,11 @@
       </div>
 
       <!-- BANCO -->
-      <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="bg-slate-700 px-6 py-4">
-          <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-            <i class="fas fa-university"></i> Datos Bancarios
-          </h3>
-        </div>
-        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold mb-4 text-slate-600 dark:text-slate-400 flex items-center gap-2">
+          <i class="fas fa-university"></i> Datos Bancarios
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">Entidad</p>
             <p class="text-gray-900 dark:text-gray-200"><%= metadata.fijos.banco?.entidad || '-' %></p>

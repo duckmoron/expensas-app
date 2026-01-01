@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
-
-    <div class="max-w-4xl mx-auto p-6 mt-6">
+<div class="max-w-4xl mx-auto p-6 mt-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
             
             <div class="border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
@@ -47,8 +34,68 @@
                     <!-- Rubro -->
                     <div class="col-span-1">
                         <label for="rubro" class="block text-sm font-medium mb-1">Rubro</label>
-                        <input type="text" id="rubro" name="rubro" value="<%= proveedor.rubro %>" placeholder="Ej: Plomería, Electricidad..."
-                            class="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        
+                        <!-- Inputs ocultos -->
+                        <input type="hidden" id="rubroInput" name="rubro" value="<%= proveedor.rubro %>">
+                        <input type="hidden" id="rubroColorInput" name="rubroColor" value="<%= proveedor.rubroColor || 'bg-gray-100 text-gray-800' %>">
+
+                        <!-- UI de Selección -->
+                        <div class="space-y-3">
+                            <!-- Input visual y selector de color -->
+                            <div class="flex gap-2">
+                                <input type="text" id="rubroVisual" value="<%= proveedor.rubro %>" placeholder="Escribe o selecciona..."
+                                    class="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                                    oninput="syncRubro(this.value)">
+                                
+                                <!-- Muestra del color seleccionado -->
+                                <div id="colorPreview" class="w-10 h-10 rounded border border-gray-300 dark:border-gray-600 flex items-center justify-center shadow-sm <%= proveedor.rubroColor || 'bg-gray-100 text-gray-800' %>">
+                                    <span class="text-xs font-bold">Aa</span>
+                                </div>
+                            </div>
+
+                            <!-- Paleta de colores -->
+                            <div class="flex flex-wrap gap-2">
+                                <% const colors = [
+                                    { cls: 'bg-gray-100 text-gray-800', label: 'Gris' },
+                                    { cls: 'bg-red-100 text-red-800', label: 'Rojo' },
+                                    { cls: 'bg-yellow-100 text-yellow-800', label: 'Amarillo' },
+                                    { cls: 'bg-green-100 text-green-800', label: 'Verde' },
+                                    { cls: 'bg-blue-100 text-blue-800', label: 'Azul' },
+                                    { cls: 'bg-indigo-100 text-indigo-800', label: 'Indigo' },
+                                    { cls: 'bg-purple-100 text-purple-800', label: 'Violeta' },
+                                    { cls: 'bg-pink-100 text-pink-800', label: 'Rosa' }
+                                ]; %>
+                                <% colors.forEach(c => { %>
+                                    <button type="button" 
+                                        class="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 <%= c.cls %> hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500"
+                                        onclick="selectColor('<%= c.cls %>')"
+                                        title="<%= c.label %>">
+                                    </button>
+                                <% }) %>
+                            </div>
+
+                            <!-- Etiquetas existentes -->
+                            <% if (locals.rubros && rubros.length > 0) { %>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">Existentes:</div>
+                                <div class="flex flex-wrap gap-2 max-h-24 overflow-y-auto p-2 border rounded-md border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                                    <% rubros.forEach(r => { %>
+                                        <div class="inline-flex items-center rounded-md overflow-hidden border border-transparent hover:border-gray-300 transition group shadow-sm">
+                                            <button type="button" 
+                                                class="px-2 py-1 text-xs font-medium <%= r.color || 'bg-gray-100 text-gray-800' %>"
+                                                onclick="selectRubro('<%= r.nombre %>', '<%= r.color %>')">
+                                                <%= r.nombre %>
+                                            </button>
+                                            <button type="button"
+                                                class="px-1.5 py-1 text-xs bg-gray-200 dark:bg-gray-600 text-gray-500 hover:text-red-100 hover:bg-red-600 dark:hover:bg-red-600 transition flex items-center justify-center"
+                                                onclick="deleteRubro('<%= r.nombre %>', this)"
+                                                title="Eliminar etiqueta">
+                                                &times;
+                                            </button>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </div>
                     </div>
 
                     <!-- Calificación -->
@@ -106,5 +153,5 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+
+<script src="/js/proveedores_form.js"></script>

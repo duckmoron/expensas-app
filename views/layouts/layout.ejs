@@ -7,11 +7,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class"
-    }
-  </script>
+  <script src="/js/tailwind-config.js"></script>
   <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -21,11 +17,13 @@
   <%- include('../partials/navbar') %>
 
   <main class="max-w-6xl mx-auto py-8 px-4">
+    <nav id="breadcrumb-container" class="hidden mb-6" aria-label="Breadcrumb"></nav>
     <%- body %>
   </main>
 
   <!-- Scripts Globales -->
   <script src="/js/main.js"></script>
+  <script src="/js/breadcrumb.js"></script>
 
   <script>
     // Initialize dark mode from localStorage

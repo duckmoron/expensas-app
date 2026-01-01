@@ -1,0 +1,14 @@
+[
+  {
+    "nombre": "Plomero",
+    "color": "bg-green-100 text-green-800"
+  },
+  {
+    "nombre": "Fumigador",
+    "color": "bg-red-100 text-red-800"
+  },
+  {
+    "nombre": "Sin clasificar",
+    "color": "bg-gray-100 text-gray-800"
+  }
+]

@@ -279,7 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.save(`Informe_Unidad_${unit.ps || ''}_${unit.dpto || ''}.pdf`);
       } catch (error) {
         console.error('Error al generar el PDF:', error);
-        alert('Ocurrió un error al generar el PDF: ' + error.message);
+        if (window.showAlert) window.showAlert({ icon: 'error', title: 'Error al generar PDF', text: error.message });
+        else alert('Ocurrió un error al generar el PDF: ' + error.message);
       }
     });
   }
