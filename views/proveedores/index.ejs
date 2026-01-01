@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        /* Ocultar scrollbar si se desea, opcional */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <div class="max-w-6xl mx-auto p-4 mt-6">
+        
+        <!-- Encabezado y Botón Nuevo -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <span>👥</span> Listado de Proveedores
+            </h1>
+            <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+            <a href="/proveedores/nuevo" class="rounded-md bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition">
+                + Nuevo Proveedor
+            </a>
+            <% } %>
+        </div>
+
+        <!-- Filtros -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-4 items-center">
+            <input id="searchInput" type="text" placeholder="Buscar por nombre, rubro o CUIT..." 
+                class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition" />
+            
+            <label class="flex items-center space-x-2 cursor-pointer select-none whitespace-nowrap">
+                <input type="checkbox" id="showInactive" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Ver inactivos</span>
+            </label>
+        </div>
+
+        <!-- Tabla -->
+        <div class="overflow-hidden rounded-lg shadow border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left">
+                    <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase text-xs">
+                        <tr>
+                            <th class="px-4 py-3">Nombre</th>
+                            <th class="px-4 py-3">Rubro</th>
+                            <th class="px-4 py-3">Calificación</th>
+                            <th class="px-4 py-3">CUIT</th>
+                            <th class="px-4 py-3">Dirección</th>
+                            <th class="px-4 py-3">Contacto</th>
+                            <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                            <th class="px-4 py-3 text-right">Acciones</th>
+                            <% } %>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaProveedores" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <% if (proveedores && proveedores.length > 0) { %>
+                            <% proveedores.forEach(p => { 
+                                const activo = p.activo !== false;
+                                const rowClass = activo ? "" : "bg-red-50 dark:bg-red-900/20 opacity-75 hidden inactive-row";
+                                const searchData = `${p.nombre} ${p.rubro} ${p.cuit} ${p.direccion}`.toLowerCase();
+                            %>
+                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition <%= rowClass %>" 
+                                    data-search="<%= searchData %>"
+                                    data-active="<%= activo %>">
+                                    
+                                    <td class="px-4 py-3 font-semibold">
+                                        <%= p.nombre %>
+                                        <% if(!activo) { %> <span class="text-xs text-red-500 font-bold ml-2">(Inactivo)</span> <% } %>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10">
+                                            <%= p.rubro || 'Sin clasificar' %>
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex text-sm">
+                                            <% const stars = p.estrellas || 0; %>
+                                            <% for(let i=1; i<=5; i++) { %><span class="<%= i <= stars ? 'text-yellow-400' : 'text-gray-300' %>">★</span><% } %>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 font-mono text-xs"><%= p.cuit %></td>
+                                    <td class="px-4 py-3 text-gray-500 dark:text-gray-400"><%= p.direccion %></td>
+                                    <td class="px-4 py-3">
+                                        <% if(p.telefono) { %> <div class="text-xs">📞 <%= p.telefono %></div> <% } %>
+                                        <% if(p.email) { %> <div class="text-xs">✉️ <%= p.email %></div> <% } %>
+                                    </td>
+                                    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                                    <td class="px-4 py-3 text-right space-x-2">
+                                        <a href="/proveedores/editar/<%= p.id %>" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium text-sm">
+                                            Editar
+                                        </a>
+                                        <% if(activo) { %>
+                                            <form action="/proveedores/eliminar/<%= p.id %>" method="POST" class="d-inline inline-block" onsubmit="return confirm('¿Estás seguro de eliminar este proveedor?');">
+                                                <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 font-medium text-sm ml-2">
+                                                    Borrar
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    </td>
+                                    <% } %>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="<%= (typeof isAuthenticated !== 'undefined' && isAuthenticated) ? 7 : 6 %>" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                    No hay proveedores registrados aún.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <a href="/" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
+                &larr; Volver al Inicio
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const showInactiveCheckbox = document.getElementById('showInactive');
+        const rows = document.querySelectorAll('#tablaProveedores tr[data-search]');
+
+        function filterTable() {
+            const term = searchInput.value.toLowerCase();
+            const showInactive = showInactiveCheckbox.checked;
+
+            rows.forEach(row => {
+                const text = row.getAttribute('data-search');
+                const isActive = row.getAttribute('data-active') === 'true';
+                
+                const matchesSearch = text.includes(term);
+                const matchesStatus = isActive || showInactive; // Si está activo siempre se muestra, si es inactivo depende del checkbox
+
+                if (matchesSearch && matchesStatus) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        showInactiveCheckbox.addEventListener('change', filterTable);
+    </script>
+</body>
+</html>

@@ -1,4 +1,74 @@
 // utils/parseEstadoCuentas.js
+
+function parseProveedor(raw) {
+  let texto = raw.replace(/\s+/g, " ").trim();
+
+  // 1️⃣ CUIT
+  const cuit = extraerCuit(texto);
+  if (cuit) {
+    texto = texto
+      .replace(cuit, "")
+      .replace(cuit.replace(/-/g, ""), "")
+      .trim();
+  }
+
+  // 2️⃣ Despegar columnas pegadas
+  texto = despegarColumnas(texto);
+
+  // 3️⃣ Separar nombre / dirección
+  const tokens = texto.split(" ");
+  const idx = tokens.findIndex(t => /\d/.test(t));
+
+  let nombre = "";
+  let direccion = "";
+
+  if (idx !== -1) {
+    nombre = tokens.slice(0, idx - 1).join(" ").trim();
+    direccion = tokens.slice(idx - 1).join(" ").trim();
+  } else {
+    nombre = texto;
+  }
+
+  return {
+    nombre,
+    direccion,
+    cuit,
+    raw
+  };
+}
+
+
+function despegarColumnas(texto) {
+  return texto.replace(
+    /([A-Z]{3,})([A-Z]{3,})\s+(\d+)/g,
+    "$1 $2 $3"
+  );
+}
+
+
+function extraerCuit(texto) {
+  // 1️⃣ CUIT bien formado (aunque esté pegado)
+  let m = texto.match(/(20|27|30)-\d{8}-\d/);
+  if (m) return m[0];
+
+  // 2️⃣ CUIT sin guiones: 3071203007-7
+  m = texto.match(/(20|27|30)\d{8}-\d/);
+  if (m) {
+    const r = m[0];
+    return `${r.slice(0,2)}-${r.slice(2,10)}-${r.slice(-1)}`;
+  }
+
+  // 3️⃣ CUIT pegado tipo: 362127-23888351-8
+  m = texto.match(/\d+-(\d{8})-(\d)/);
+  if (m) {
+    return `30-${m[1]}-${m[2]}`;
+  }
+
+  return "";
+}
+
+
+
 function parseEstadoCuentas(text) {
   if (!text || typeof text !== "string") {
     return { unidades: [], totales: {}, metadata: {} };
@@ -256,8 +326,9 @@ function parseEstadoCuentas(text) {
     if (/Proveedores del Consorcio/i.test(l)) inProv = true;
     else if (inProv && /Pagina:/i.test(l)) inProv = false;
     else if (inProv && /\d{2}-\d{8}-\d/i.test(l)) {
-      proveedores.push({ raw: l });
+      proveedores.push(parseProveedor(l));
     }
+
   });
 
   // ==========================================================================
@@ -275,10 +346,10 @@ function parseEstadoCuentas(text) {
       dinamicos: {
         aviso_pago,
         gastos_mes,
-        pagos_cobranzas,
-        proveedores
+        pagos_cobranzas
       }
-    }
+    },
+    proveedores
   };
 }
 

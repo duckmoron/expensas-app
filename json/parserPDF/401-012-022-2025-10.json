@@ -757,30 +757,7 @@
         "ingresos_intereses": "34.443,47",
         "egresos": "-8.480.225,98",
         "saldo_final": "7.600.196,11"
-      },
-      "proveedores": [
-        {
-          "raw": "ASCENSORES LUCGUEVARA 1623 DPTO 5 B CABA20-10151590-8"
-        },
-        {
-          "raw": "SIPAC SERV. COMPUTACION SRLCONGRESO 217130-70783114-2"
-        },
-        {
-          "raw": "FARIAS MARCELO GABRIEL VICTORINO DE LA PLAZA 3831 MERLO 20-36824581-0"
-        },
-        {
-          "raw": "LA FEDERAL DESTAPACIONESOLAZABAL 3449 PISO 2 DPTO A20-22756701-6"
-        },
-        {
-          "raw": "LOS DOS ASESARISMENDI 2656 PISO 6 DPTO A CABA20-16124680-9"
-        },
-        {
-          "raw": "FUMIGACIONES LOMARBLANCO ENCALADA 362127-23888351-8"
-        },
-        {
-          "raw": "MLG GRAFICA LIBRERIAGARCIA LORCA FEDERICO 4327-23223915-3"
-        }
-      ]
+      }
     }
   }
 }
